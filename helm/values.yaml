@@ -17,6 +17,11 @@ global:
   # Authorized SSH keys
   ssh-authorized-keys: ""
 
+  # Database settings
+  db:
+    user: "docker"
+    password: "docker"
+
   # S3 settings
   # If using other settings than the default settings, you can disable the S3 StatefulSet by setting '.s3.enabled' to false
   s3:

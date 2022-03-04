@@ -47,9 +47,9 @@ spec:
         - name: DB_PORT
           value: "5432"
         - name: DB_USER
-          value: "docker"
+          value: "{{ .Values.global.db.user }}"
         - name: DB_PASSWORD
-          value: "docker"
+          value: "{{ .Values.global.db.password }}"
         command:
         - /bin/sh
         - -c
@@ -83,11 +83,11 @@ spec:
         - name: DB_HOST
           value: "openbalena-db"
         - name: DB_PASSWORD
-          value: "docker"
+          value: "{{ .Values.global.db.password }}"
         - name: DB_PORT
           value: "5432"
         - name: DB_USER
-          value: "docker"
+          value: "{{ .Values.global.db.user }}"
         - name: DELTA_HOST
           value: "delta.{{ .Values.global.hostname }}"
         - name: DEVICE_CONFIG_OPENVPN_CA

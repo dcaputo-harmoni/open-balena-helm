@@ -52,9 +52,9 @@ spec:
             containerPort: 5432
         env:
           - name: POSTGRES_USER
-            value: "docker"
+            value: "{{ .Values.global.db.user }}"
           - name: POSTGRES_PASSWORD
-            value: "docker"
+            value: "{{ .Values.global.db.password }}"
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: data
