@@ -13,6 +13,11 @@ global:
   # Authorized SSH keys
   ssh-authorized-keys: "${OPENBALENA_SSH_AUTHORIZED_KEYS}"
 
+  # Database settings
+  db:
+    user: "${OPENBALENA_DB_USERNAME}"
+    password: "${OPENBALENA_DB_PASSWORD}"
+    
   # S3 settings
   # If using other settings than the default settings, you can disable the S3 StatefulSet by setting '.s3.enabled' to false
   s3:
