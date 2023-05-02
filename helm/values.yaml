@@ -92,8 +92,8 @@ global:
 
 ingress:
   # Global ingress settings
-  annotations:
-    kubernetes.io/ingress.class: openbalena-haproxy
+  ingressClassName: openbalena-haproxy
+  annotations: {}
 
   # HTTP ingress settings
   http:
@@ -247,7 +247,8 @@ redis:
 haproxy:
   controller:
     ingressClass: "openbalena-haproxy"
-
+    ingressClassResource:
+      enabled: true
     # Change config of HAProxy
     # This will add a snippet for the VPN using port 443
     config:
