@@ -61,7 +61,10 @@ spec:
         - name: CONFD_BACKEND
           value: "ENV"
         - name: API_SERVICE_API_KEY
-          value: "{{ index .Values "global" "keys" "api-vpn-service-api-key" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-vpn-api-keys
+              key: api
         - name: API_HOST
           value: "api.{{ .Values.global.hostname }}"
         - name: VPN_PORT
@@ -75,15 +78,30 @@ spec:
         - name: VPN_HAPROXY_USEPROXYPROTOCOL
           value: "false"
         - name: VPN_OPENVPN_CA_CRT
-          value: "{{ index .Values "global" "certificates" "vpn" "ca" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-cert-vpn
+              key: ca
         - name: VPN_OPENVPN_SERVER_CRT
-          value: "{{ index .Values "global" "certificates" "vpn" "crt" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-cert-vpn
+              key: crt
         - name: VPN_OPENVPN_SERVER_DH
-          value: "{{ index .Values "global" "certificates" "vpn" "dh" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-vpn-auth
+              key: dh-params
         - name: VPN_OPENVPN_SERVER_KEY
-          value: "{{ index .Values "global" "certificates" "vpn" "server-key" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-cert-vpn
+              key: key
         - name: VPN_SERVICE_API_KEY
-          value: "{{ index .Values "global" "keys" "service-api-key" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-api-keys
+              key: vpn
 
         # Use the 'eth0' interface, so the VPN will register itself via the Cluster IP of the pod
         - name: VPN_SERVICE_REGISTER_INTERFACE

@@ -57,9 +57,15 @@ spec:
             add: ["SYS_ADMIN", "SYS_RESOURCE"]
         env:
         - name: S3_MINIO_ACCESS_KEY
-          value: "{{ index .Values "global" "s3" "accesskey" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-s3-keys
+              key: access-key
         - name: S3_MINIO_SECRET_KEY
-          value: "{{ index .Values "global" "s3" "secretkey" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-s3-keys
+              key: secret-key
         - name: BUCKETS
           value: "{{ index .Values "global" "s3" "bucket" }}"
         volumeMounts:

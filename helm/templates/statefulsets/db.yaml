@@ -52,9 +52,15 @@ spec:
             containerPort: 5432
         env:
           - name: POSTGRES_USER
-            value: "{{ .Values.global.db.user }}"
+            valueFrom:
+              secretKeyRef:
+                name: openbalena-db-creds
+                key: username
           - name: POSTGRES_PASSWORD
-            value: "{{ .Values.global.db.password }}"
+            valueFrom:
+              secretKeyRef:
+                name: openbalena-db-creds
+                key: password
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: data

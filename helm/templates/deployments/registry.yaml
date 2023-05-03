@@ -57,7 +57,10 @@ spec:
         - name: CONFD_BACKEND
           value: "ENV"
         - name: API_TOKENAUTH_CRT
-          value: "{{ index .Values "global" "keys" "token-auth-pub" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-cert-jwt
+              key: crt
         - name: REGISTRY2_HOST
           value: "registry.{{ .Values.global.hostname }}"
         - name: REGISTRY2_PROXY_ENABLED
@@ -83,17 +86,27 @@ spec:
         - name: REGISTRY2_S3_BUCKET
           value: "{{ index .Values "global" "s3" "bucket" }}"
         - name: REGISTRY2_S3_KEY
-          value: "{{ index .Values "global" "s3" "accesskey" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-s3-keys
+              key: access-key
         - name: REGISTRY2_S3_SECRET
-          value: "{{ index .Values "global" "s3" "secretkey" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-s3-keys
+              key: secret-key
         - name: REGISTRY2_SECRETKEY
-          value: "{{ index .Values "global" "keys" "registry-secret-key" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-registry-http
+              key: secret
         - name: REGISTRY2_STORAGEPATH
           value: "{{ .Values.global.s3.storagePath }}"
         - name: TOKEN_AUTH_BUILDER_TOKEN
-          value: "{{ index .Values "global" "keys" "token-auth-builder-token" }}"
-        - name: AUTH_RESINOS_REGISTRY_CODE
-          value: "{{ index .Values "global" "keys" "registry-code" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-registry-api-keys
+              key: builder
 
         {{- if .Values.registry.disableRedirect }}
         - name: REGISTRY2_DISABLE_REDIRECT

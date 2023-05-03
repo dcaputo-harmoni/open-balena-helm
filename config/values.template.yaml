@@ -19,7 +19,6 @@ global:
   keys:
     cookie-secret: "${OPENBALENA_COOKIE_SESSION_SECRET}"
     jwt-secret: ${OPENBALENA_JWT_SECRET}
-    registry-code: ${OPENBALENA_RESINOS_REGISTRY_CODE}
     service-api-key: "${OPENBALENA_VPN_SERVICE_API_KEY}"
     api-vpn-service-api-key: "${OPENBALENA_API_VPN_SERVICE_API_KEY}"
     registry-secret-key: "${OPENBALENA_REGISTRY_SECRET_KEY}"

@@ -23,7 +23,6 @@ global:
   keys:
     cookie-secret:
     jwt-secret:
-    registry-code:
     service-api-key:
     api-vpn-service-api-key:
     registry-secret-key:

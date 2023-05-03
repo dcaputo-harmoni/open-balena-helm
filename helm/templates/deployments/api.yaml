@@ -47,9 +47,15 @@ spec:
         - name: DB_PORT
           value: "5432"
         - name: DB_USER
-          value: "{{ .Values.global.db.user }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-db-creds
+              key: username
         - name: DB_PASSWORD
-          value: "{{ .Values.global.db.password }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-db-creds
+              key: password
         command:
         - /bin/sh
         - -c
@@ -77,17 +83,29 @@ spec:
         - name: CONFD_BACKEND
           value: "ENV"
         - name: API_VPN_SERVICE_API_KEY
-          value: "{{ index .Values "global" "keys" "api-vpn-service-api-key" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-vpn-api-keys
+              key: api
         - name: COOKIE_SESSION_SECRET
-          value: "{{ index .Values "global" "keys" "cookie-secret" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-api-cookie-session
+              key: secret
         - name: DB_HOST
           value: "openbalena-db"
         - name: DB_PASSWORD
-          value: "{{ .Values.global.db.password }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-db-creds
+              key: password
         - name: DB_PORT
           value: "5432"
         - name: DB_USER
-          value: "{{ .Values.global.db.user }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-db-creds
+              key: username
         - name: DELTA_HOST
           value: "delta.{{ .Values.global.hostname }}"
         - name: DEVICE_CONFIG_OPENVPN_CA
@@ -107,7 +125,10 @@ spec:
         - name: JSON_WEB_TOKEN_EXPIRY_MINUTES
           value: "10080"
         - name: JSON_WEB_TOKEN_SECRET
-          value: "{{ index .Values "global" "keys" "jwt-secret" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-api-jwt-auth
+              key: secret
         - name: MAX_CONNECTIONS
           value: "1000"
         - name: METRICS_MAX_REPORT_INTERVAL_SECONDS
@@ -125,15 +146,27 @@ spec:
         - name: SENTRY_DSN
           value: "{{ index .Values "api" "sentry-dsn" }}"
         - name: TOKEN_AUTH_BUILDER_TOKEN
-          value: "{{ index .Values "global" "keys" "token-auth-builder-token" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-registry-api-keys
+              key: builder
         - name: TOKEN_AUTH_CERT_ISSUER
           value: "api.{{ .Values.global.hostname }}"
         - name: TOKEN_AUTH_CERT_KEY
-          value: "{{ index .Values "global" "keys" "token-auth-key" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-cert-jwt
+              key: key
         - name: TOKEN_AUTH_CERT_KID
-          value: "{{ index .Values "global" "keys" "token-auth-kid" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-api-jwt-auth
+              key: keyid
         - name: TOKEN_AUTH_CERT_PUB
-          value: "{{ index .Values "global" "keys" "token-auth-pub" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-cert-jwt
+              key: crt
         - name: TOKEN_AUTH_JWT_ALGO
           value: "ES256"
         - name: VPN_HOST
@@ -141,11 +174,20 @@ spec:
         - name: VPN_PORT
           value: "443"
         - name: VPN_SERVICE_API_KEY
-          value: "{{ index .Values "global" "keys" "service-api-key" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-api-keys
+              key: vpn
         - name: SUPERUSER_EMAIL
-          value: "{{ index .Values "global" "email" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-api-creds
+              key: email
         - name: SUPERUSER_PASSWORD
-          value: "{{ index .Values "global" "password" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-api-creds
+              key: password
         volumeMounts:
         - mountPath: /run
           name: run
