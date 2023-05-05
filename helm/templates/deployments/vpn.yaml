@@ -116,11 +116,29 @@ spec:
           name: run
         - mountPath: /sys/fs/cgroup
           name: cgroup
+        - mountPath: /etc/podinfo
+          name: podinfo
+        - mountPath: /balena
+          name: balena
+        lifecycle:
+          postStart:
+            exec:
+              command: ["touch", "/balena/.env"]
       volumes:
       - name: run
         emptyDir:
           medium: Memory
       - name: cgroup
+        emptyDir:
+          medium: Memory
+      - name: podinfo
+        downwardAPI:
+          items:
+          - path: "cpu_request"
+            resourceFieldRef:
+              containerName: {{ .Chart.Name }}-vpn
+              resource: requests.cpu
+      - name: balena
         emptyDir:
           medium: Memory
 

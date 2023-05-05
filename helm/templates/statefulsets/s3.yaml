@@ -77,6 +77,12 @@ spec:
           name: run
         - mountPath: /sys/fs/cgroup
           name: cgroup
+        - mountPath: /balena
+          name: balena
+        lifecycle:
+          postStart:
+            exec:
+              command: ["touch", "/balena/.env"]
       volumes:
       - name: data
         persistentVolumeClaim:
@@ -85,6 +91,9 @@ spec:
         emptyDir:
           medium: Memory
       - name: cgroup
+        emptyDir:
+          medium: Memory
+      - name: balena
         emptyDir:
           medium: Memory
 
