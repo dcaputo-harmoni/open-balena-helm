@@ -67,6 +67,11 @@ spec:
               key: api
         - name: API_HOST
           value: "api.{{ .Values.global.hostname }}"
+        - name: ROOT_CA
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-cert-root
+              key: ca
         - name: VPN_PORT
           value: "443"
         - name: PRODUCTION_MODE
@@ -120,13 +125,7 @@ spec:
       - name: cgroup
         emptyDir:
           medium: Memory
-      - name: podinfo
-        downwardAPI:
-          items:
-          - path: "cpu_request"
-            resourceFieldRef:
-              containerName: {{ .Chart.Name }}-vpn
-              resource: requests.cpu
+
       {{- with .Values.vpn.nodeSelector  }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

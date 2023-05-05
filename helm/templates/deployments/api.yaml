@@ -87,6 +87,11 @@ spec:
             secretKeyRef:
               name: openbalena-vpn-api-keys
               key: api
+        - name: ROOT_CA
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-cert-root
+              key: ca
         - name: COOKIE_SESSION_SECRET
           valueFrom:
             secretKeyRef:
@@ -109,9 +114,15 @@ spec:
         - name: DELTA_HOST
           value: "delta.{{ .Values.global.hostname }}"
         - name: DEVICE_CONFIG_OPENVPN_CA
-          value: "{{ index .Values "global" "certificates" "vpn" "ca-chain" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-cert-vpn
+              key: ca
         - name: DEVICE_CONFIG_SSH_AUTHORIZED_KEYS
-          value: "{{ index .Values "global" "ssh-authorized-keys" }}"
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-ssh
+              key: authorized-keys
         - name: HOST
           value: "api.{{ .Values.global.hostname }}"
         - name: IMAGE_MAKER_URL
@@ -137,11 +148,17 @@ spec:
           value: "__unused__"
         - name: PRODUCTION_MODE
           value: "{{ index .Values "global" "production-mode" }}"
+        - name: PUBNUB_PUBLISH_KEY
+          value: "__unused__"
+        - name: PUBNUB_SUBSCRIBE_KEY
+          value: "__unused__"
         - name: REDIS_HOST
-          value: "{{- include "openbalena.fullname" . }}-redis"
-        - name: REDIS_PORT
-          value: "6379"
+          value: "{{- include "openbalena.fullname" . }}-redis:6379"
+        - name: REDIS_IS_CLUSTER
+          value: "false"
         - name: REGISTRY2_HOST
+          value: "registry.{{ .Values.global.hostname }}"
+        - name: REGISTRY_HOST
           value: "registry.{{ .Values.global.hostname }}"
         - name: SENTRY_DSN
           value: "{{ index .Values "api" "sentry-dsn" }}"
