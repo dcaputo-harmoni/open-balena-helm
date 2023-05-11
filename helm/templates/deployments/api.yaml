@@ -82,16 +82,15 @@ spec:
         env:
         - name: CONFD_BACKEND
           value: "ENV"
+        - name: BALENA_TLD
+          value: "{{ .Values.global.hostname }}"
+        - name: TRUST_PROXY
+          value: "true"
         - name: API_VPN_SERVICE_API_KEY
           valueFrom:
             secretKeyRef:
               name: openbalena-vpn-api-keys
               key: api
-        - name: ROOT_CA
-          valueFrom:
-            secretKeyRef:
-              name: openbalena-cert-root
-              key: ca
         - name: COOKIE_SESSION_SECRET
           valueFrom:
             secretKeyRef:
@@ -113,11 +112,6 @@ spec:
               key: username
         - name: DELTA_HOST
           value: "delta.{{ .Values.global.hostname }}"
-        - name: DEVICE_CONFIG_OPENVPN_CA
-          valueFrom:
-            secretKeyRef:
-              name: openbalena-cert-vpn
-              key: ca
         - name: DEVICE_CONFIG_SSH_AUTHORIZED_KEYS
           valueFrom:
             secretKeyRef:
@@ -162,28 +156,8 @@ spec:
           value: "registry.{{ .Values.global.hostname }}"
         - name: SENTRY_DSN
           value: "{{ index .Values "api" "sentry-dsn" }}"
-        - name: TOKEN_AUTH_BUILDER_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: openbalena-registry-api-keys
-              key: builder
         - name: TOKEN_AUTH_CERT_ISSUER
           value: "api.{{ .Values.global.hostname }}"
-        - name: TOKEN_AUTH_CERT_KEY
-          valueFrom:
-            secretKeyRef:
-              name: openbalena-cert-jwt
-              key: key
-        - name: TOKEN_AUTH_CERT_KID
-          valueFrom:
-            secretKeyRef:
-              name: openbalena-api-jwt-auth
-              key: keyid
-        - name: TOKEN_AUTH_CERT_PUB
-          valueFrom:
-            secretKeyRef:
-              name: openbalena-cert-jwt
-              key: crt
         - name: TOKEN_AUTH_JWT_ALGO
           value: "ES256"
         - name: VPN_HOST
@@ -210,12 +184,32 @@ spec:
           name: run
         - mountPath: /sys/fs/cgroup
           name: cgroup
-        - mountPath: /balena
-          name: balena
+        - mountPath: /certs/root
+          name: cert-root
+        - mountPath: /certs/vpn
+          name: cert-vpn
+        - mountPath: /certs/vpn-dhparams
+          name: cert-vpn-dhparams
+        - mountPath: /certs/api
+          name: cert-api
         lifecycle:
           postStart:
             exec:
-              command: ["touch", "/balena/.env"]
+              command:
+                - "sh"
+                - "-c"
+                - >
+                  mkdir /balena;
+                  touch /balena/openbalena.dev.harmoni.io.env;
+                  mkdir /certs/private;
+                  ln -s /certs/root/ca_chain /certs/ca-bundle.pem;
+                  ln -s /certs/vpn/certificate /certs/private/vpn.openbalena.dev.harmoni.io.pem;
+                  ln -s /certs/vpn/private_key /certs/private/vpn.openbalena.dev.harmoni.io.key;
+                  ln -s /certs/vpn-dhparams/dhparams /certs/private/dhparam.openbalena.dev.harmoni.io.pem;
+                  ln -s /certs/api/certificate /certs/private/api.openbalena.dev.harmoni.io.pem;
+                  ln -s /certs/api/private_key /certs/private/api.openbalena.dev.harmoni.io.key;
+                  openssl x509 -outform der -in /certs/api/certificate | sha256sum | head -c 60 | xxd -r -p | base32 | fold -w4 | paste -sd : | tr -d '\n' > /certs/private/api.openbalena.dev.harmoni.io.kid;
+                  echo "TRUST_PROXY=$TRUST_PROXY" >> /usr/src/app/config/confd/templates/env.tmpl
       volumes:
       - name: run
         emptyDir:
@@ -223,9 +217,18 @@ spec:
       - name: cgroup
         emptyDir:
           medium: Memory
-      - name: balena
-        emptyDir:
-          medium: Memory
+      - name: cert-root
+        secret:
+          secretName: openbalena-pki-root
+      - name: cert-vpn
+        secret:
+          secretName: openbalena-pki-vpn
+      - name: cert-vpn-dhparams
+        secret:
+          secretName: openbalena-vpn-dhparams
+      - name: cert-api
+        secret:
+          secretName: openbalena-pki-api
 
       {{- with .Values.api.nodeSelector  }}
       nodeSelector:

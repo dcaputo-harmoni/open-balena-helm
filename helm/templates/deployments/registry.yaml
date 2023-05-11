@@ -56,18 +56,10 @@ spec:
         env:
         - name: CONFD_BACKEND
           value: "ENV"
-        - name: API_TOKENAUTH_CRT
-          valueFrom:
-            secretKeyRef:
-              name: openbalena-cert-jwt
-              key: crt
+        - name: BALENA_TLD
+          value: "{{ .Values.global.hostname }}"
         - name: REGISTRY2_HOST
           value: "registry.{{ .Values.global.hostname }}"
-        - name: ROOT_CA
-          valueFrom:
-            secretKeyRef:
-              name: openbalena-cert-root
-              key: ca
         - name: REGISTRY2_TOKEN_AUTH_ISSUER
           value: "api.{{ .Values.global.hostname }}"
         - name: REGISTRY2_TOKEN_AUTH_REALM
@@ -87,7 +79,7 @@ spec:
         - name: REGISTRY2_CACHE_MAXMEMORY_POLICY
           value: "allkeys-lru"
         - name: REGISTRY2_S3_REGION_ENDPOINT
-          value: "{{ index .Values "global" "s3" "endpoint" }}"
+          value: "https://s3.{{ .Values.global.hostname }}"
         - name: REGISTRY2_S3_BUCKET
           value: "{{ index .Values "global" "s3" "bucket" }}"
         - name: REGISTRY2_S3_KEY
@@ -129,12 +121,31 @@ spec:
           name: run
         - mountPath: /sys/fs/cgroup
           name: cgroup
-        - mountPath: /balena
-          name: balena
+        - mountPath: /certs/root
+          name: cert-root
+        - mountPath: /certs/vpn
+          name: cert-vpn
+        - mountPath: /certs/vpn-dhparams
+          name: cert-vpn-dhparams
+        - mountPath: /certs/api
+          name: cert-api
         lifecycle:
           postStart:
             exec:
-              command: ["touch", "/balena/.env"]
+              command:
+                - "sh"
+                - "-c"
+                - >
+                  mkdir /balena;
+                  touch /balena/openbalena.dev.harmoni.io.env;
+                  mkdir /certs/private;
+                  ln -s /certs/root/ca_chain /certs/ca-bundle.pem;
+                  ln -s /certs/vpn/certificate /certs/private/vpn.openbalena.dev.harmoni.io.pem;
+                  ln -s /certs/vpn/private_key /certs/private/vpn.openbalena.dev.harmoni.io.key;
+                  ln -s /certs/vpn-dhparams/dhparams /certs/private/dhparam.openbalena.dev.harmoni.io.pem;
+                  ln -s /certs/api/certificate /certs/private/api.openbalena.dev.harmoni.io.pem;
+                  ln -s /certs/api/private_key /certs/private/api.openbalena.dev.harmoni.io.key;
+                  openssl x509 -outform der -in /certs/api/certificate | sha256sum | head -c 60 | xxd -r -p | base32 | fold -w4 | paste -sd : | tr -d '\n' > /certs/private/api.openbalena.dev.harmoni.io.kid;
       volumes:
       - name: run
         emptyDir:
@@ -142,9 +153,18 @@ spec:
       - name: cgroup
         emptyDir:
           medium: Memory
-      - name: balena
-        emptyDir:
-          medium: Memory
+      - name: cert-root
+        secret:
+          secretName: openbalena-pki-root
+      - name: cert-vpn
+        secret:
+          secretName: openbalena-pki-vpn
+      - name: cert-vpn-dhparams
+        secret:
+          secretName: openbalena-vpn-dhparams
+      - name: cert-api
+        secret:
+          secretName: openbalena-pki-api
 
       {{- with .Values.registry.nodeSelector  }}
       nodeSelector:

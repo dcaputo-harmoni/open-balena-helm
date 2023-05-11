@@ -1,8 +1,6 @@
 global:
-  hostname: "${OPENBALENA_HOST_NAME}"
   email: "${OPENBALENA_SUPERUSER_EMAIL}"
   password: "${OPENBALENA_SUPERUSER_PASSWORD}"
-  production-mode: ${OPENBALENA_PRODUCTION_MODE}
   ssh-authorized-keys: "${OPENBALENA_SSH_AUTHORIZED_KEYS}"
 
   db:
@@ -10,9 +8,6 @@ global:
     password: "${OPENBALENA_DB_PASSWORD}"
     
   s3:
-    bucket: "${OPENBALENA_S3_BUCKETS}"
-    endpoint: "${OPENBALENA_S3_ENDPOINT}"
-    region: "${OPENBALENA_S3_REGION}"
     accesskey: "${OPENBALENA_S3_ACCESS_KEY}"
     secretkey: "${OPENBALENA_S3_SECRET_KEY}"
 

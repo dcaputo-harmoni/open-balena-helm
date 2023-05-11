@@ -9,9 +9,9 @@ global:
     password: "docker"
 
   s3:
-    bucket: ""
+    bucket: "registry-data"
     endpoint: ""
-    region: ""
+    region: "us-east-1"
     accesskey: ""
     secretkey: ""
     storagePath: "/data"
