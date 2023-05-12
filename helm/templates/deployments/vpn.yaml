@@ -113,7 +113,7 @@ spec:
                   mkdir /balena;
                   touch /balena/{{ .Values.global.hostname }}.env;
                   mkdir /certs/private;
-                  ln -s /certs/root/ca_chain /certs/ca-bundle.pem;
+                  ln -s /certs/vpn/ca_chain /certs/ca-bundle.pem;
                   ln -s /certs/vpn/certificate /certs/private/vpn.{{ .Values.global.hostname }}.pem;
                   ln -s /certs/vpn/private_key /certs/private/vpn.{{ .Values.global.hostname }}.key;
                   ln -s /certs/vpn-dhparams/dhparams /certs/private/dhparam.{{ .Values.global.hostname }}.pem;
