@@ -18,18 +18,4 @@ global:
     api-vpn-service-api-key: "${OPENBALENA_API_VPN_SERVICE_API_KEY}"
     registry-secret-key: "${OPENBALENA_REGISTRY_SECRET_KEY}"
     token-auth-builder-token: "${OPENBALENA_TOKEN_AUTH_BUILDER_TOKEN}"
-    token-auth-pub: "${OPENBALENA_TOKEN_AUTH_PUB}"
-    token-auth-key: "${OPENBALENA_TOKEN_AUTH_KEY}"
-    token-auth-kid: "${OPENBALENA_TOKEN_AUTH_KID}"
-
-  certificates:
-    root:
-      ca: "${OPENBALENA_ROOT_CA}"
-      crt: "${OPENBALENA_ROOT_CRT}"
-      key: "${OPENBALENA_ROOT_KEY}"
-    vpn:
-      ca: "${OPENBALENA_VPN_CA}"
-      ca-chain: "${OPENBALENA_VPN_CA_CHAIN}"
-      crt: "${OPENBALENA_VPN_SERVER_CRT}"
-      server-key: "${OPENBALENA_VPN_SERVER_KEY}"
-      dh: "${OPENBALENA_VPN_SERVER_DH}"
+    vpn-dhparams: "${OPENBALENA_VPN_SERVER_DH}"

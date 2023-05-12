@@ -1,3 +1,4 @@
 config/values.yaml
 helm/charts
+helm/certs
 Chart.lock

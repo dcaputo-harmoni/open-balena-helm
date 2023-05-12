@@ -1,7 +1,7 @@
 global:
   hostname: ""
-  email: ""
-  password: ""
+  email: "admin@openbalena.io"
+  password: "password"
   production-mode: false
   ssh-authorized-keys: ""
   db:
@@ -27,21 +27,7 @@ global:
     api-vpn-service-api-key:
     registry-secret-key:
     token-auth-builder-token:
-    token-auth-pub:
-    token-auth-key:
-    token-auth-kid:
-
-  certificates:
-    root:
-      ca:
-      crt:
-      key:
-    vpn:
-      ca:
-      ca-chain:
-      crt:
-      server-key:
-      dh:
+    vpn-dhparams:
 
 secrets:
   create: true
