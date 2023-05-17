@@ -119,7 +119,7 @@ spec:
                   ln -s /certs/vpn-dhparams/dhparams /certs/private/dhparam.{{ .Values.global.hostname }}.pem;
                   ln -s /certs/api/certificate /certs/private/api.{{ .Values.global.hostname }}.pem;
                   ln -s /certs/api/private_key /certs/private/api.{{ .Values.global.hostname }}.key;
-                  openssl x509 -outform der -in /certs/api/certificate | sha256sum | head -c 60 | xxd -r -p | base32 | fold -w4 | paste -sd : | tr -d '\n' > /certs/private/api.{{ .Values.global.hostname }}.kid;
+                  openssl ec -pubout -outform der -in /certs/api/private_key | sha256sum | head -c 60 | xxd -r -p | base32 | fold -w4 | paste -sd : | tr -d '\n' > /certs/private/api.{{ .Values.global.hostname }}.kid;
       volumes:
       - name: run
         emptyDir:
