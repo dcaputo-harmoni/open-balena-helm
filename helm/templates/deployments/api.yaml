@@ -150,6 +150,22 @@ spec:
           value: "{{- include "openbalena.fullname" . }}-redis:6379"
         - name: REDIS_IS_CLUSTER
           value: "false"
+
+        {{- if .Values.api.lokiHost }}
+        - name: LOKI_HOST
+          value: "{{ .Values.api.lokiHost }}"
+        {{- end }}
+
+        {{- if .Values.api.lokiPort }}
+        - name: LOKI_PORT
+          value: "{{ .Values.api.lokiPort }}"
+        {{- end }}
+
+        {{- if .Values.api.lokiWritePct }}
+        - name: LOKI_WRITE_PCT
+          value: "{{ .Values.api.lokiWritePct }}"
+        {{- end }}
+
         - name: REGISTRY2_HOST
           value: "registry.{{ .Values.global.hostname }}"
         - name: REGISTRY_HOST
