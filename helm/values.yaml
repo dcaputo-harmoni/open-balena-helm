@@ -62,6 +62,10 @@ api:
 
   sentry-dsn: ""
 
+  lokiHost: loki-write
+  lokiPort: 9095
+  lokiWritePct: 100
+
 vpn:
   replicas: 1
   image:
@@ -194,3 +198,73 @@ haproxy:
             acl is_ssl req.ssl_ver 2:3.4
             use_backend {{ .Release.Namespace }}_openbalena-vpn_443 if !is_ssl
             # END::Redirect to openBalena VPN
+
+loki:
+  loki:
+    auth_enabled: false
+    storage:
+      s3:
+        endpoint: openbalena-s3
+        insecure: true
+        s3ForcePathStyle: true
+        region: us-east-1
+        accessKeyId: \${S3_LOKI_ACCESS_KEY_ID}
+        secretAccessKey: \${S3_LOKI_SECRET_ACCESS_KEY}
+      bucketNames:
+        admin: loki
+        chunks: loki
+        ruler: loki
+  backend:
+    replicas: 2
+    extraArgs:
+      - '-config.expand-env=true'
+    extraEnv:
+      - name: S3_LOKI_ACCESS_KEY_ID
+        valueFrom:
+          secretKeyRef:
+            name: openbalena-s3-keys
+            key: access-key
+      - name: S3_LOKI_SECRET_ACCESS_KEY
+        valueFrom:
+          secretKeyRef:
+            name: openbalena-s3-keys
+            key: secret-key
+  read:
+    replicas: 2
+    extraArgs:
+      - '-config.expand-env=true'
+    extraEnv:
+      - name: S3_LOKI_ACCESS_KEY_ID
+        valueFrom:
+          secretKeyRef:
+            name: openbalena-s3-keys
+            key: access-key
+      - name: S3_LOKI_SECRET_ACCESS_KEY
+        valueFrom:
+          secretKeyRef:
+            name: openbalena-s3-keys
+            key: secret-key
+  write:
+    replicas: 2
+    extraArgs:
+      - '-config.expand-env=true'
+    extraEnv:
+      - name: S3_LOKI_ACCESS_KEY_ID
+        valueFrom:
+          secretKeyRef:
+            name: openbalena-s3-keys
+            key: access-key
+      - name: S3_LOKI_SECRET_ACCESS_KEY
+        valueFrom:
+          secretKeyRef:
+            name: openbalena-s3-keys
+            key: secret-key
+  monitoring:
+    lokiCanary:
+      enabled: false
+    selfMonitoring:
+      enabled: false
+    serviceMonitor:
+      enabled: false
+  test:
+    enabled: false
