@@ -46,7 +46,7 @@ api:
   replicas: 1
   image:
     repository: balena/open-balena-api
-    tag: "v11.7.0"
+    tag: "v11.8.3"
     pullPolicy: IfNotPresent
 
   labels: {}
@@ -66,7 +66,7 @@ vpn:
   replicas: 1
   image:
     repository: balena/open-balena-vpn
-    tag: "v11.25.0"
+    tag: "v11.26.0"
     pullPolicy: IfNotPresent
 
   labels: {}
