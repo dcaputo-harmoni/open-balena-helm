@@ -61,9 +61,22 @@ spec:
         - -c
         - >
           until /usr/lib/postgresql/12/bin/pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER -d resin -q; do
-            echo "Waiting for openbalena-db..."
-            sleep 5
+            echo "Waiting for openbalena-db...";
+            sleep 5;
           done
+      - name: generate-api-kid
+        image: ubuntu:22.04
+        volumeMounts:
+        - mountPath: /cert-api
+          name: cert-api
+        - mountPath: /cert-api-kid
+          name: cert-api-kid
+        command:
+        - /bin/bash
+        - -c
+        - >
+          apt-get update && apt-get install -y openssl xxd;
+          openssl ec -pubout -outform der -in /cert-api/private_key | sha256sum | head -c 60 | xxd -r -p | base32 | fold -w4 | paste -sd : | tr -d '\n' > /cert-api-kid/api_kid
       containers:
       - name: {{ .Chart.Name }}-api
         image: {{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}
@@ -208,6 +221,8 @@ spec:
           name: cert-vpn-dhparams
         - mountPath: /certs/api
           name: cert-api
+        - mountPath: /certs/api-kid
+          name: cert-api-kid
         lifecycle:
           postStart:
             exec:
@@ -218,13 +233,13 @@ spec:
                   mkdir /balena;
                   touch /balena/{{ .Values.global.hostname }}.env;
                   mkdir /certs/private;
-                  ln -s /certs/vpn/ca_chain /certs/ca-bundle.pem;
+                  ln -s /certs/vpn/issuing_ca /certs/ca-bundle.pem;
                   ln -s /certs/vpn/certificate /certs/private/vpn.{{ .Values.global.hostname }}.pem;
                   ln -s /certs/vpn/private_key /certs/private/vpn.{{ .Values.global.hostname }}.key;
                   ln -s /certs/vpn-dhparams/dhparams /certs/private/dhparam.{{ .Values.global.hostname }}.pem;
                   ln -s /certs/api/certificate /certs/private/api.{{ .Values.global.hostname }}.pem;
                   ln -s /certs/api/private_key /certs/private/api.{{ .Values.global.hostname }}.key;
-                  openssl ec -pubout -outform der -in /certs/api/private_key | sha256sum | head -c 60 | xxd -r -p | base32 | fold -w4 | paste -sd : | tr -d '\n' > /certs/private/api.{{ .Values.global.hostname }}.kid;
+                  ln -s /certs/api-kid/api_kid /certs/private/api.{{ .Values.global.hostname }}.kid;
       volumes:
       - name: run
         emptyDir:
@@ -232,6 +247,8 @@ spec:
       - name: cgroup
         emptyDir:
           medium: Memory
+      - name: cert-api-kid
+        emptyDir: {}
       - name: cert-root
         secret:
           secretName: openbalena-pki-root
