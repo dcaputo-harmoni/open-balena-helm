@@ -192,6 +192,10 @@ haproxy:
     ingressClassResource:
       enabled: true
     config:
+      timeout-server: 75s
+      timeout-server-fin: 75s
+      timeout-client: 75s
+      timeout-client-fin: 75s
       config-proxy: |-
           _front__tls
             # BEGIN::Redirect to openBalena VPN

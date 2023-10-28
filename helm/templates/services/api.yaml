@@ -10,17 +10,10 @@ metadata:
     {{- with .Values.api.service.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
+  {{- with .Values.api.service.annotations }}
   annotations:
-    haproxy.org/backend-config-snippet: |
-      timeout connect 0ms
-      timeout client 0ms
-      timeout server 0ms
-      timeout http-keep-alive 0ms
-      timeout http-request 0ms
-
-    {{- with .Values.api.service.annotations }}
     {{- toYaml . | nindent 4 }}
-    {{- end }}
+  {{- end }}
 spec:
   selector:
     {{- include "openbalena.selectorLabels" . | nindent 4 }}
