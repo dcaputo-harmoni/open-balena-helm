@@ -4,17 +4,22 @@ global:
   password: "password"
   production-mode: false
   ssh-authorized-keys: ""
+
   db:
     user: "docker"
     password: "docker"
 
   s3:
-    bucket: "registry-data"
+    buckets: "registry-data;image-data"
+    registryBucket: "registry-data"
+    registryStoragePath: "/data"
+    imageBucket: "image-data"
+    imageStoragePrefix: "images"
     endpoint: ""
     region: "us-east-1"
     accesskey: ""
     secretkey: ""
-    storagePath: "/data"
+
     cloudfront:
       endpoint:
       keypair:
@@ -65,6 +70,11 @@ api:
   lokiHost: loki-write
   lokiPort: 9095
   lokiWritePct: 100
+
+  contractsPrivateRepoOwner:
+  contractsPrivateRepoName:
+  contractsPrivateRepoBranch:
+  contractsPrivateRepoToken:
 
 vpn:
   replicas: 1

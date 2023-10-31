@@ -133,14 +133,24 @@ spec:
               key: authorized-keys
         - name: HOST
           value: "api.{{ .Values.global.hostname }}"
-        - name: IMAGE_MAKER_URL
-          value: "img.{{ .Values.global.hostname }}"
-        - name: IMAGE_STORAGE_BUCKET
-          value: "resin-production-img-cloudformation"
         - name: IMAGE_STORAGE_ENDPOINT
-          value: "s3.amazonaws.com"
+          value: "s3.{{ .Values.global.hostname }}"
+        - name: IMAGE_STORAGE_BUCKET
+          value: "{{ index .Values "global" "s3" "imageBucket" }}"
         - name: IMAGE_STORAGE_PREFIX
-          value: "resinos"
+          value: "{{ index .Values "global" "s3" "imageStoragePrefix" }}"
+        - name: IMAGE_STORAGE_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-s3-keys
+              key: access-key
+        - name: IMAGE_STORAGE_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-s3-keys
+              key: secret-key
+        - name: IMAGE_STORAGE_FORCE_PATH_STYLE
+          value: "true"
         - name: JSON_WEB_TOKEN_EXPIRY_MINUTES
           value: "10080"
         - name: JSON_WEB_TOKEN_SECRET
@@ -170,6 +180,26 @@ spec:
           value: "{{ .Values.api.lokiPort }}"
         - name: LOKI_WRITE_PCT
           value: "{{ .Values.api.lokiWritePct }}"
+
+        {{- if .Values.api.contractsPrivateRepoOwner }}
+        - name: CONTRACTS_PRIVATE_REPO_OWNER
+          value: "{{ .Values.api.contractsPrivateRepoOwner }}"
+        - name: CONTRACTS_PRIVATE_REPO_NAME
+          value: "{{ .Values.api.contractsPrivateRepoName }}"
+        - name: CONTRACTS_PRIVATE_REPO_BRANCH
+          value: "{{ .Values.api.contractsPrivateRepoBranch }}"
+        - name: CONTRACTS_PRIVATE_REPO_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-api-github-auth
+              key: token
+        {{- end }}
+
+        {{- if .Values.api.contractAllowlist }}
+        - name: CONTRACT_ALLOWLIST
+          value: "{{ .Values.api.contractAllowlist }}"
+        {{- end }}
+
         - name: REGISTRY2_HOST
           value: "registry.{{ .Values.global.hostname }}"
         - name: REGISTRY_HOST
@@ -231,6 +261,9 @@ spec:
                   ln -s /certs/api/certificate /certs/private/api.{{ .Values.global.hostname }}.pem;
                   ln -s /certs/api/private_key /certs/private/api.{{ .Values.global.hostname }}.key;
                   ln -s /certs/api-kid/api_kid /certs/private/api.{{ .Values.global.hostname }}.kid;
+                  cd /usr/src/app;
+                  wget -q https://github.com/balena-io/open-balena-api/pull/1468/commits/0712973575e0ab6d54119f9c9538d473b95330f9.patch;
+                  patch -p1 < 0712973575e0ab6d54119f9c9538d473b95330f9.patch;
       volumes:
       - name: run
         emptyDir:

@@ -81,7 +81,9 @@ spec:
         - name: REGISTRY2_S3_REGION_ENDPOINT
           value: "https://s3.{{ .Values.global.hostname }}"
         - name: REGISTRY2_S3_BUCKET
-          value: "{{ index .Values "global" "s3" "bucket" }}"
+          value: "{{ .Values.global.s3.registryBucket }}"
+        - name: REGISTRY2_STORAGEPATH
+          value: "{{ .Values.global.s3.registryStoragePath }}"
         - name: REGISTRY2_S3_KEY
           valueFrom:
             secretKeyRef:
@@ -97,8 +99,6 @@ spec:
             secretKeyRef:
               name: openbalena-registry-http
               key: secret
-        - name: REGISTRY2_STORAGEPATH
-          value: "{{ .Values.global.s3.storagePath }}"
         - name: REGISTRY2_DISABLE_UPLOAD_PURGING
           value: "{{ .Values.registry.disableUploadPurging }}"
 

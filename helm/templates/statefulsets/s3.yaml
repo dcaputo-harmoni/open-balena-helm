@@ -69,7 +69,7 @@ spec:
               name: openbalena-s3-keys
               key: secret-key
         - name: BUCKETS
-          value: "{{ index .Values "global" "s3" "bucket" }}"
+          value: "{{ index .Values "global" "s3" "buckets" }}"
         volumeMounts:
         - mountPath: /export
           name: data
