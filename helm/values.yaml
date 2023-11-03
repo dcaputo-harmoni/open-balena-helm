@@ -196,6 +196,28 @@ redis:
   storage: "10Gi"
   storageClass:
 
+delta:
+  enabled: true
+  replicas: 1
+  image:
+    repository: harmonidcaputo/open-balena-delta
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
+  labels: {}
+  annotations: {}
+  affinity: {}
+  resources: {}
+  nodeSelector: {}
+
+  service:
+    labels: {}
+    annotations: {}
+    externalIPs: []
+
+  storage: "10Gi"
+  storageClass:
+
 haproxy:
   controller:
     ingressClass: "openbalena-haproxy"
