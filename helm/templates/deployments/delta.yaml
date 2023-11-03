@@ -57,19 +57,6 @@ spec:
         env:
         - name: REGISTRY_HOST
           value: "registry.{{ .Values.global.hostname }}"
-        volumeMounts:
-        - mountPath: /run
-          name: run
-        - mountPath: /sys/fs/cgroup
-          name: cgroup
-      volumes:
-      - name: run
-        emptyDir:
-          medium: Memory
-      - name: cgroup
-        emptyDir:
-          medium: Memory
-
       {{- with .Values.delta.nodeSelector  }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
