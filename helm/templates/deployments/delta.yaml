@@ -57,6 +57,16 @@ spec:
         env:
         - name: REGISTRY_HOST
           value: "registry.{{ .Values.global.hostname }}"
+        - name: BALENAOS_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-delta-creds-balenaos
+              key: username
+        - name: BALENAOS_APIKEY
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-delta-creds-balenaos
+              key: api-key
       {{- with .Values.delta.nodeSelector  }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
