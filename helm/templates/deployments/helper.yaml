@@ -1,0 +1,82 @@
+{{- if .Values.helper.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "openbalena.fullname" . }}-helper
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "openbalena.labels" . | nindent 4 }}
+    app.kubernetes.io/component: helper
+
+    {{- with .Values.helper.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.helper.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.helper.affinity }}
+  affinity:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "openbalena.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: helper
+
+      {{- with .Values.helper.labels }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+  replicas: {{ .Values.helper.replicas }}
+  template:
+    metadata:
+      labels:
+        {{- include "openbalena.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: helper
+
+        {{- with .Values.helper.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}-helper
+        image: {{ .Values.helper.image.repository }}:{{ .Values.helper.image.tag }}
+        imagePullPolicy: {{ .Values.helper.image.pullPolicy }}
+        {{- with .Values.helper.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        ports:
+          - name: http
+            containerPort: 80
+        securityContext:
+          privileged: true
+          capabilities:
+            add: ["SYS_ADMIN", "SYS_RESOURCE"]
+        env:
+        - name: API_HOST
+          value: "api.{{ .Values.global.hostname }}"
+        - name: IMAGE_STORAGE_ENDPOINT
+          value: "s3.{{ .Values.global.hostname }}"
+        - name: IMAGE_STORAGE_BUCKET
+          value: "{{ index .Values "global" "s3" "imageBucket" }}"
+        - name: IMAGE_STORAGE_PREFIX
+          value: "{{ index .Values "global" "s3" "imageStoragePrefix" }}"
+        - name: IMAGE_STORAGE_FORCE_PATH_STYLE
+          value: "true"
+        - name: IMAGE_STORAGE_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-s3-keys
+              key: access-key
+        - name: IMAGE_STORAGE_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-s3-keys
+              key: secret-key
+      {{- with .Values.helper.nodeSelector  }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

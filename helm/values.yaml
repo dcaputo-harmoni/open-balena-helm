@@ -196,11 +196,11 @@ redis:
   storage: "10Gi"
   storageClass:
 
-delta:
+builder:
   enabled: true
   replicas: 1
   image:
-    repository: harmonidcaputo/open-balena-delta
+    repository: harmonidcaputo/open-balena-builder
     tag: "latest"
     pullPolicy: IfNotPresent
 
@@ -215,9 +215,55 @@ delta:
     annotations: {}
     externalIPs: []
   
-  balenaosUsername:
-  balenaosApiKey:
+  storage: "10Gi"
+  storageClass:
 
+helper:
+  enabled: true
+  replicas: 1
+  image:
+    repository: harmonidcaputo/open-balena-helper
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
+  labels: {}
+  annotations: {}
+  affinity: {}
+  resources: {}
+  nodeSelector: {}
+
+  service:
+    labels: {}
+    annotations: {}
+    externalIPs: []
+  
+  storage: "10Gi"
+  storageClass:
+
+dind:
+  enabled: true
+  replicas: 1
+
+  arm64:
+    enabled: false
+    replicas: 1
+
+  image:
+    repository: docker:24.0.7-dind
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
+  labels: {}
+  annotations: {}
+  affinity: {}
+  resources: {}
+  nodeSelector: {}
+
+  service:
+    labels: {}
+    annotations: {}
+    externalIPs: []
+  
   storage: "10Gi"
   storageClass:
 

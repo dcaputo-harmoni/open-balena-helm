@@ -1,0 +1,81 @@
+{{- if .Values.builder.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "openbalena.fullname" . }}-builder
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "openbalena.labels" . | nindent 4 }}
+    app.kubernetes.io/component: builder
+
+    {{- with .Values.builder.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.builder.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.builder.affinity }}
+  affinity:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "openbalena.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: builder
+
+      {{- with .Values.builder.labels }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+  replicas: {{ .Values.builder.replicas }}
+  template:
+    metadata:
+      labels:
+        {{- include "openbalena.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: builder
+
+        {{- with .Values.builder.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}-builder
+        image: {{ .Values.builder.image.repository }}:{{ .Values.builder.image.tag }}
+        imagePullPolicy: {{ .Values.builder.image.pullPolicy }}
+        {{- with .Values.builder.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        ports:
+          - name: http
+            containerPort: 80
+        securityContext:
+          privileged: true
+          capabilities:
+            add: ["SYS_ADMIN", "SYS_RESOURCE"]
+        env:
+        - name: BALENA_TLD
+          value: "{{ .Values.global.hostname }}"
+        - name: DOCKER_HOST
+          value: "tcp://{{ .Chart.Name }}-dind:2375"
+        {{- if .Values.dind.arm64.enabled }}
+        - name: DOCKER_HOST_ARM64
+          value: "tcp://{{ .Chart.Name }}-dind-arm64:2375"
+        {{- end }}
+        - name: DOCKER_BUILDKIT
+          value: "0"
+        - name: API_HOST
+          value: "api.{{ .Values.global.hostname }}"
+        - name: REGISTRY_HOST
+          value: "registry.{{ .Values.global.hostname }}"
+        - name: TOKEN_AUTH_BUILDER_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-registry-api-keys
+              key: builder
+      {{- with .Values.builder.nodeSelector  }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

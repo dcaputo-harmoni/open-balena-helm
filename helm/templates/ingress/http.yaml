@@ -1,10 +1,4 @@
-{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
 apiVersion: networking.k8s.io/v1
-{{- else if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta1/Ingress" }}
-apiVersion: networking.k8s.io/v1beta1
-{{- else }}
-apiVersion: extensions/v1beta1
-{{- end }}
 kind: Ingress
 metadata:
   name: {{ include "openbalena.fullname" . }}
@@ -27,8 +21,9 @@ spec:
     {{- if .Values.s3.enabled }}
     - s3.{{ .Values.global.hostname }}
     {{- end }}
-    {{- if .Values.delta.enabled }}
+    {{- if .Values.builder.enabled }}
     - delta.{{ .Values.global.hostname }}
+    - builder.{{ .Values.global.hostname }}
     {{- end }}
     secretName: {{ include "openbalena.fullname" . }}-tls
   ingressClassName: {{ .Values.ingress.ingressClassName }}
@@ -43,6 +38,22 @@ spec:
             name: {{ include "openbalena.fullname" . }}-api
             port:
               number: 80
+      {{- if .Values.helper.enabled }}
+      - path: /download
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "openbalena.fullname" . }}-helper
+            port:
+              number: 80
+      - path: /v6/supervisor_release
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "openbalena.fullname" . }}-helper
+            port:
+              number: 80
+      {{- end }}
   - host: registry.{{ .Values.global.hostname }}
     http:
       paths:
@@ -65,7 +76,7 @@ spec:
             port:
               number: 80
   {{- end }}
-  {{- if .Values.delta.enabled }}
+  {{- if .Values.builder.enabled }}
   - host: delta.{{ .Values.global.hostname }}
     http:
       paths:
@@ -73,7 +84,17 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: {{ include "openbalena.fullname" . }}-delta
+            name: {{ include "openbalena.fullname" . }}-builder
+            port:
+              number: 80
+  - host: builder.{{ .Values.global.hostname }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "openbalena.fullname" . }}-builder
             port:
               number: 80
   {{- end }}
