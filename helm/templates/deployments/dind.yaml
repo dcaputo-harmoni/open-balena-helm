@@ -63,9 +63,8 @@ spec:
       volumes:
         - name: dind-storage
           emptyDir: {}
+      {{- with .Values.dind.nodeSelector  }}
       nodeSelector:
-        kubernetes.io/arch: amd64
-        {{- with .Values.dind.nodeSelector  }}
         {{- toYaml . | nindent 8 }}
-        {{- end }}
+      {{- end }}
 {{- end }}

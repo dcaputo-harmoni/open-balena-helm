@@ -8,15 +8,15 @@ metadata:
     {{- include "openbalena.labels" . | nindent 4 }}
     app.kubernetes.io/component: dind-arm64
 
-    {{- with .Values.dind.labels }}
+    {{- with .Values.dind.arm64.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-  {{- with .Values.dind.annotations }}
+  {{- with .Values.dind.arm64.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- with .Values.dind.affinity }}
+  {{- with .Values.dind.arm64.affinity }}
   affinity:
     {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -25,7 +25,7 @@ spec:
       {{- include "openbalena.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: dind-arm64
 
-      {{- with .Values.dind.labels }}
+      {{- with .Values.dind.arm64.labels }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
   replicas: {{ .Values.dind.arm64.replicas }}
@@ -35,15 +35,15 @@ spec:
         {{- include "openbalena.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: dind-arm64
 
-        {{- with .Values.dind.labels }}
+        {{- with .Values.dind.arm64.labels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
       containers:
       - name: {{ .Chart.Name }}-dind-arm64
-        image: {{ .Values.dind.image.repository }}:{{ .Values.dind.image.tag }}
-        imagePullPolicy: {{ .Values.dind.image.pullPolicy }}
-        {{- with .Values.dind.resources }}
+        image: {{ .Values.dind.arm64.image.repository }}:{{ .Values.dind.arm64.image.tag }}
+        imagePullPolicy: {{ .Values.dind.arm64.image.pullPolicy }}
+        {{- with .Values.dind.arm64.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}
@@ -63,9 +63,8 @@ spec:
       volumes:
         - name: dind-arm64-storage
           emptyDir: {}
+      {{- with .Values.dind.arm64.nodeSelector  }}
       nodeSelector:
-        kubernetes.io/arch: arm64
-        {{- with .Values.dind.nodeSelector  }}
         {{- toYaml . | nindent 8 }}
-        {{- end }}
+      {{- end }}
 {{- end }}

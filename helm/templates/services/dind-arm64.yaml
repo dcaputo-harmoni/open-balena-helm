@@ -1,3 +1,4 @@
+{{- if .Values.dind.arm64.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -5,12 +6,12 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "openbalena.labels" . | nindent 4 }}
-    app.kubernetes.io/component: dind
+    app.kubernetes.io/component: dind-arm64
 
-    {{- with .Values.dind.service.labels }}
+    {{- with .Values.dind.arm64.service.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-  {{- with .Values.dind.service.annotations }}
+  {{- with .Values.dind.arm64.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -19,14 +20,15 @@ spec:
     {{- include "openbalena.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: dind-arm64
 
-    {{- with .Values.dind.service.labels }}
+    {{- with .Values.dind.arm64.service.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
   ports:
   - port: 2375
     protocol: TCP
     targetPort: 2375
-  {{- with .Values.dind.service.externalIPs }}
+  {{- with .Values.dind.arm64.service.externalIPs }}
   externalIPs:
     {{- toYaml . | nindent 4 }}
   {{- end }}
+{{- end }}

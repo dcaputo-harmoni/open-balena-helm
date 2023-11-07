@@ -58,11 +58,14 @@ api:
   annotations: {}
   affinity: {}
   resources: {}
-  nodeSelector: {}
+  nodeSelector:
+    kubernetes.io/arch: amd64
+
 
   service:
     labels: {}
-    annotations: {}
+    annotations:
+      haproxy-ingress.github.io/timeout-server: "75s"
     externalIPs: []
 
   sentry-dsn: ""
@@ -87,7 +90,8 @@ vpn:
   annotations: {}
   affinity: {}
   resources: {}
-  nodeSelector: {}
+  nodeSelector:
+    kubernetes.io/arch: amd64
 
   service:
     labels: {}
@@ -109,7 +113,8 @@ registry:
   annotations: {}
   affinity: {}
   resources: {}
-  nodeSelector: {}
+  nodeSelector:
+    kubernetes.io/arch: amd64
 
   service:
     labels: {}
@@ -128,7 +133,8 @@ s3:
   annotations: {}
   affinity: {}
   resources: {}
-  nodeSelector: {}
+  nodeSelector:
+    kubernetes.io/arch: amd64
 
   service:
     labels: {}
@@ -149,7 +155,8 @@ db:
   annotations: {}
   affinity: {}
   resources: {}
-  nodeSelector: {}
+  nodeSelector:
+    kubernetes.io/arch: amd64
 
   service:
     labels: {}
@@ -186,7 +193,8 @@ redis:
   annotations: {}
   affinity: {}
   resources: {}
-  nodeSelector: {}
+  nodeSelector:
+    kubernetes.io/arch: amd64
 
   service:
     labels: {}
@@ -208,11 +216,14 @@ builder:
   annotations: {}
   affinity: {}
   resources: {}
-  nodeSelector: {}
+  nodeSelector:
+    kubernetes.io/arch: amd64
 
+  # Need extended timeout for build and delta operations
   service:
     labels: {}
-    annotations: {}
+    annotations:
+      haproxy-ingress.github.io/timeout-server: "6h"
     externalIPs: []
   
   storage: "10Gi"
@@ -230,7 +241,8 @@ helper:
   annotations: {}
   affinity: {}
   resources: {}
-  nodeSelector: {}
+  nodeSelector:
+    kubernetes.io/arch: amd64
 
   service:
     labels: {}
@@ -243,21 +255,19 @@ helper:
 dind:
   enabled: true
   replicas: 1
-
-  arm64:
-    enabled: false
-    replicas: 1
-
   image:
-    repository: docker:24.0.7-dind
-    tag: "latest"
+    repository: docker
+    tag: "24.0.7-dind"
     pullPolicy: IfNotPresent
 
   labels: {}
   annotations: {}
   affinity: {}
-  resources: {}
-  nodeSelector: {}
+  resources:
+    limits:
+      memory: "8Gi"
+  nodeSelector:
+    kubernetes.io/arch: amd64
 
   service:
     labels: {}
@@ -267,22 +277,45 @@ dind:
   storage: "10Gi"
   storageClass:
 
+  arm64:
+    enabled: false
+    replicas: 1
+    image:
+      repository: docker
+      tag: "24.0.7-dind"
+      pullPolicy: IfNotPresent
+
+    labels: {}
+    annotations: {}
+    affinity: {}
+    resources:
+      limits:
+        memory: "8Gi"
+    nodeSelector:
+      kubernetes.io/arch: arm64
+
+    service:
+      labels: {}
+      annotations: {}
+      externalIPs: []
+    
+    storage: "10Gi"
+    storageClass:
+
 haproxy:
   controller:
     ingressClass: "openbalena-haproxy"
     ingressClassResource:
       enabled: true
     config:
-      timeout-server: 30m
-      timeout-server-fin: 30m
-      timeout-client: 30m
-      timeout-client-fin: 30m
       config-proxy: |-
           _front__tls
             # BEGIN::Redirect to openBalena VPN
             acl is_ssl req.ssl_ver 2:3.4
             use_backend {{ .Release.Namespace }}_openbalena-vpn_443 if !is_ssl
             # END::Redirect to openBalena VPN
+    nodeSelector:
+      kubernetes.io/arch: amd64
 
 loki:
   loki:
@@ -299,8 +332,14 @@ loki:
         admin: loki
         chunks: loki
         ruler: loki
+  gateway:
+    replicas: 1
+    nodeSelector:
+      kubernetes.io/arch: amd64
   backend:
     replicas: 2
+    nodeSelector:
+      kubernetes.io/arch: amd64
     extraArgs:
       - '-config.expand-env=true'
     extraEnv:
@@ -316,6 +355,8 @@ loki:
             key: secret-key
   read:
     replicas: 2
+    nodeSelector:
+      kubernetes.io/arch: amd64
     extraArgs:
       - '-config.expand-env=true'
     extraEnv:
@@ -331,6 +372,8 @@ loki:
             key: secret-key
   write:
     replicas: 2
+    nodeSelector:
+      kubernetes.io/arch: amd64
     extraArgs:
       - '-config.expand-env=true'
     extraEnv:
