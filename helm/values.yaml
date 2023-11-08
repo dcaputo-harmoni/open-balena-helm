@@ -263,9 +263,7 @@ dind:
   labels: {}
   annotations: {}
   affinity: {}
-  resources:
-    limits:
-      memory: "8Gi"
+  resources: {}
   nodeSelector:
     kubernetes.io/arch: amd64
 
@@ -288,9 +286,7 @@ dind:
     labels: {}
     annotations: {}
     affinity: {}
-    resources:
-      limits:
-        memory: "8Gi"
+    resources: {}
     nodeSelector:
       kubernetes.io/arch: arm64
 
@@ -392,6 +388,8 @@ loki:
       enabled: false
     selfMonitoring:
       enabled: false
+      grafanaAgent:
+        installOperator: false
     serviceMonitor:
       enabled: false
   test:
