@@ -22,8 +22,10 @@ spec:
     - s3.{{ .Values.global.hostname }}
     {{- end }}
     {{- if .Values.builder.enabled }}
-    - delta.{{ .Values.global.hostname }}
     - builder.{{ .Values.global.hostname }}
+    {{- end }}
+    {{- if .Values.delta.enabled }}
+    - delta.{{ .Values.global.hostname }}
     {{- end }}
     secretName: {{ include "openbalena.fullname" . }}-tls
   ingressClassName: {{ .Values.ingress.ingressClassName }}
@@ -77,7 +79,7 @@ spec:
               number: 80
   {{- end }}
   {{- if .Values.builder.enabled }}
-  - host: delta.{{ .Values.global.hostname }}
+  - host: builder.{{ .Values.global.hostname }}
     http:
       paths:
       - path: /
@@ -87,14 +89,16 @@ spec:
             name: {{ include "openbalena.fullname" . }}-builder
             port:
               number: 80
-  - host: builder.{{ .Values.global.hostname }}
+  {{- end }}
+  {{- if .Values.delta.enabled }}
+  - host: delta.{{ .Values.global.hostname }}
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: {{ include "openbalena.fullname" . }}-builder
+            name: {{ include "openbalena.fullname" . }}-delta
             port:
               number: 80
   {{- end }}

@@ -1,33 +1,33 @@
-{{- if .Values.dind.arm64.enabled }}
+{{- if .Values.builder.arm64.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "openbalena.fullname" . }}-dind-arm64
+  name: {{ include "openbalena.fullname" . }}-builder-arm64
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "openbalena.labels" . | nindent 4 }}
-    app.kubernetes.io/component: dind-arm64
+    app.kubernetes.io/component: builder-arm64
 
-    {{- with .Values.dind.arm64.service.labels }}
+    {{- with .Values.builder.arm64.service.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-  {{- with .Values.dind.arm64.service.annotations }}
+  {{- with .Values.builder.arm64.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   selector:
     {{- include "openbalena.selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: dind-arm64
+    app.kubernetes.io/component: builder-arm64
 
-    {{- with .Values.dind.arm64.service.labels }}
+    {{- with .Values.builder.arm64.service.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
   ports:
   - port: 2375
     protocol: TCP
     targetPort: 2375
-  {{- with .Values.dind.arm64.service.externalIPs }}
+  {{- with .Values.builder.arm64.service.externalIPs }}
   externalIPs:
     {{- toYaml . | nindent 4 }}
   {{- end }}

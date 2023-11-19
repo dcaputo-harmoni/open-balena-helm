@@ -210,7 +210,7 @@ builder:
   image:
     repository: harmonidcaputo/open-balena-builder
     tag: "latest"
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
 
   labels: {}
   annotations: {}
@@ -229,51 +229,28 @@ builder:
   storage: "10Gi"
   storageClass:
 
-helper:
-  enabled: true
-  replicas: 1
-  image:
-    repository: harmonidcaputo/open-balena-helper
-    tag: "latest"
-    pullPolicy: IfNotPresent
+  amd64:
+    enabled: true
+    replicas: 1
+    image:
+      repository: docker
+      tag: "24.0.7-dind"
+      pullPolicy: IfNotPresent
 
-  labels: {}
-  annotations: {}
-  affinity: {}
-  resources: {}
-  nodeSelector:
-    kubernetes.io/arch: amd64
-
-  service:
     labels: {}
     annotations: {}
-    externalIPs: []
-  
-  storage: "10Gi"
-  storageClass:
+    affinity: {}
+    resources: {}
+    nodeSelector:
+      kubernetes.io/arch: amd64
 
-dind:
-  enabled: true
-  replicas: 1
-  image:
-    repository: docker
-    tag: "24.0.7-dind"
-    pullPolicy: IfNotPresent
-
-  labels: {}
-  annotations: {}
-  affinity: {}
-  resources: {}
-  nodeSelector:
-    kubernetes.io/arch: amd64
-
-  service:
-    labels: {}
-    annotations: {}
-    externalIPs: []
-  
-  storage: "10Gi"
-  storageClass:
+    service:
+      labels: {}
+      annotations: {}
+      externalIPs: []
+    
+    storage: "10Gi"
+    storageClass:
 
   arm64:
     enabled: false
@@ -298,11 +275,61 @@ dind:
     storage: "10Gi"
     storageClass:
 
+delta:
+  enabled: true
+  replicas: 1
+  image:
+    repository: harmonidcaputo/open-balena-delta
+    tag: "latest"
+    pullPolicy: Always
+
+  labels: {}
+  annotations: {}
+  affinity: {}
+  resources: {}
+  nodeSelector:
+    kubernetes.io/arch: amd64
+
+  # Need extended timeout for build and delta operations
+  service:
+    labels: {}
+    annotations:
+      haproxy-ingress.github.io/timeout-server: "6h"
+    externalIPs: []
+  
+  storage: "10Gi"
+  storageClass:
+
+helper:
+  enabled: true
+  replicas: 1
+  image:
+    repository: harmonidcaputo/open-balena-helper
+    tag: "latest"
+    pullPolicy: Always
+
+  labels: {}
+  annotations: {}
+  affinity: {}
+  resources: {}
+  nodeSelector:
+    kubernetes.io/arch: amd64
+
+  service:
+    labels: {}
+    annotations: {}
+    externalIPs: []
+  
+  storage: "10Gi"
+  storageClass:
+
 haproxy:
   controller:
     ingressClass: "openbalena-haproxy"
     ingressClassResource:
       enabled: true
+#    logs:
+#      enabled: true
     config:
       config-proxy: |-
           _front__tls
@@ -310,6 +337,10 @@ haproxy:
             acl is_ssl req.ssl_ver 2:3.4
             use_backend {{ .Release.Namespace }}_openbalena-vpn_443 if !is_ssl
             # END::Redirect to openBalena VPN
+#      timeout-server: "15m"
+#      timeout-server-fin: "15m"
+#      timeout-client: "15m"
+#      timeout-client-fin: "15m"
     nodeSelector:
       kubernetes.io/arch: amd64
 
@@ -349,6 +380,13 @@ loki:
           secretKeyRef:
             name: openbalena-s3-keys
             key: secret-key
+    persistence:
+      enableStatefulSetAutoDeletePVC: true
+      size: 10Gi
+      storageClass: azuredisk-sc
+      selector:
+        matchLabels: 
+          app: loki-backend
   read:
     replicas: 2
     nodeSelector:
@@ -383,6 +421,13 @@ loki:
           secretKeyRef:
             name: openbalena-s3-keys
             key: secret-key
+    persistence:
+      enableStatefulSetAutoDeletePVC: true
+      size: 10Gi
+      storageClass: azuredisk-sc
+      selector:
+        matchLabels: 
+          app: loki-write
   monitoring:
     lokiCanary:
       enabled: false

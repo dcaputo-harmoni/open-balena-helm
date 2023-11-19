@@ -1,49 +1,49 @@
-{{- if .Values.dind.enabled }}
+{{- if .Values.builder.arm64.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "openbalena.fullname" . }}-dind
+  name: {{ include "openbalena.fullname" . }}-builder-arm64
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "openbalena.labels" . | nindent 4 }}
-    app.kubernetes.io/component: dind
+    app.kubernetes.io/component: builder-arm64
 
-    {{- with .Values.dind.labels }}
+    {{- with .Values.builder.arm64.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-  {{- with .Values.dind.annotations }}
+  {{- with .Values.builder.arm64.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- with .Values.dind.affinity }}
+  {{- with .Values.builder.arm64.affinity }}
   affinity:
     {{- toYaml . | nindent 4 }}
   {{- end }}
   selector:
     matchLabels:
       {{- include "openbalena.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: dind
+      app.kubernetes.io/component: builder-arm64
 
-      {{- with .Values.dind.labels }}
+      {{- with .Values.builder.arm64.labels }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
-  replicas: {{ .Values.dind.replicas }}
+  replicas: {{ .Values.builder.arm64.replicas }}
   template:
     metadata:
       labels:
         {{- include "openbalena.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: dind
+        app.kubernetes.io/component: builder-arm64
 
-        {{- with .Values.dind.labels }}
+        {{- with .Values.builder.arm64.labels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
       containers:
-      - name: {{ .Chart.Name }}-dind
-        image: {{ .Values.dind.image.repository }}:{{ .Values.dind.image.tag }}
-        imagePullPolicy: {{ .Values.dind.image.pullPolicy }}
-        {{- with .Values.dind.resources }}
+      - name: {{ .Chart.Name }}-builder-arm64
+        image: {{ .Values.builder.arm64.image.repository }}:{{ .Values.builder.arm64.image.tag }}
+        imagePullPolicy: {{ .Values.builder.arm64.image.pullPolicy }}
+        {{- with .Values.builder.arm64.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}
@@ -58,12 +58,12 @@ spec:
         - name: DOCKER_TLS_CERTDIR
           value: ""
         volumeMounts:
-          - name: dind-storage
+          - name: builder-arm64-storage
             mountPath: /var/lib/docker
       volumes:
-        - name: dind-storage
+        - name: builder-arm64-storage
           emptyDir: {}
-      {{- with .Values.dind.nodeSelector  }}
+      {{- with .Values.builder.arm64.nodeSelector  }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}

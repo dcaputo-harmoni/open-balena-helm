@@ -1,49 +1,49 @@
-{{- if .Values.builder.enabled }}
+{{- if .Values.delta.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "openbalena.fullname" . }}-builder
+  name: {{ include "openbalena.fullname" . }}-delta
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "openbalena.labels" . | nindent 4 }}
-    app.kubernetes.io/component: builder
+    app.kubernetes.io/component: delta
 
-    {{- with .Values.builder.labels }}
+    {{- with .Values.delta.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-  {{- with .Values.builder.annotations }}
+  {{- with .Values.delta.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- with .Values.builder.affinity }}
+  {{- with .Values.delta.affinity }}
   affinity:
     {{- toYaml . | nindent 4 }}
   {{- end }}
   selector:
     matchLabels:
       {{- include "openbalena.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: builder
+      app.kubernetes.io/component: delta
 
-      {{- with .Values.builder.labels }}
+      {{- with .Values.delta.labels }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
-  replicas: {{ .Values.builder.replicas }}
+  replicas: {{ .Values.delta.replicas }}
   template:
     metadata:
       labels:
         {{- include "openbalena.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: builder
+        app.kubernetes.io/component: delta
 
-        {{- with .Values.builder.labels }}
+        {{- with .Values.delta.labels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
       containers:
-      - name: {{ .Chart.Name }}-builder
-        image: {{ .Values.builder.image.repository }}:{{ .Values.builder.image.tag }}
-        imagePullPolicy: {{ .Values.builder.image.pullPolicy }}
-        {{- with .Values.builder.resources }}
+      - name: {{ .Chart.Name }}-delta
+        image: {{ .Values.delta.image.repository }}:{{ .Values.delta.image.tag }}
+        imagePullPolicy: {{ .Values.delta.image.pullPolicy }}
+        {{- with .Values.delta.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}
@@ -57,16 +57,10 @@ spec:
         env:
         - name: BALENA_TLD
           value: "{{ .Values.global.hostname }}"
-        - name: API_HOST
-          value: "api.{{ .Values.global.hostname }}"
-        {{- if .Values.builder.amd64.enabled }}
-        - name: DOCKER_HOST_AMD64
-          value: "tcp://{{ .Chart.Name }}-builder-amd64:2375"
-        {{- end }}
-        {{- if .Values.builder.arm64.enabled }}
-        - name: DOCKER_HOST_ARM64
-          value: "tcp://{{ .Chart.Name }}-builder-arm64:2375"
-        {{- end }}
+        - name: REGISTRY_HOST
+          value: "registry.{{ .Values.global.hostname }}"
+        - name: DOCKER_HOST
+          value: "unix:///var/run/docker.sock"
         - name: DOCKER_BUILDKIT
           value: "0"
         - name: TOKEN_AUTH_BUILDER_TOKEN
@@ -74,7 +68,7 @@ spec:
             secretKeyRef:
               name: openbalena-registry-api-keys
               key: builder
-      {{- with .Values.builder.nodeSelector  }}
+      {{- with .Values.delta.nodeSelector  }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
