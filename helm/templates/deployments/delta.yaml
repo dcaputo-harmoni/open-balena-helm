@@ -68,6 +68,17 @@ spec:
             secretKeyRef:
               name: openbalena-registry-api-keys
               key: builder
+        volumeMounts:
+          - name: balena-engine-storage
+            mountPath: /var/lib/balena-engine
+        volumeMounts:
+          - name: delta-rsync-storage
+            mountPath: /delta-rsync
+      volumes:
+        - name: balena-engine-storage
+          emptyDir: {}
+        - name: delta-rsync-storage
+          emptyDir: {}
       {{- with .Values.delta.nodeSelector  }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
