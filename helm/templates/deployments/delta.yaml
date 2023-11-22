@@ -68,6 +68,11 @@ spec:
             secretKeyRef:
               name: openbalena-registry-api-keys
               key: builder
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-api-jwt-auth
+              key: secret
         volumeMounts:
           - name: balena-engine-storage
             mountPath: /var/lib/balena-engine
