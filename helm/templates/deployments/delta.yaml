@@ -68,6 +68,8 @@ spec:
             secretKeyRef:
               name: openbalena-registry-api-keys
               key: builder
+        - name: JWT_ALGO
+          value: "ES256"
         - name: JWT_SECRET
           valueFrom:
             secretKeyRef:
