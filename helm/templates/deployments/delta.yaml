@@ -70,22 +70,30 @@ spec:
               key: builder
         - name: JWT_ALGO
           value: "ES256"
-        - name: JWT_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: openbalena-api-jwt-auth
-              key: secret
         volumeMounts:
-          - name: balena-engine-storage
-            mountPath: /var/lib/balena-engine
-        volumeMounts:
-          - name: delta-rsync-storage
-            mountPath: /delta-rsync
-      volumes:
         - name: balena-engine-storage
-          emptyDir: {}
+          mountPath: /var/lib/balena-engine
         - name: delta-rsync-storage
-          emptyDir: {}
+          mountPath: /delta-rsync
+        - name: cert-api
+          mountPath: /certs/api
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - >
+                  mkdir /certs/private;
+                  ln -s /certs/api/certificate /certs/private/api.{{ .Values.global.hostname }}.pem;
+      volumes:
+      - name: balena-engine-storage
+        emptyDir: {}
+      - name: delta-rsync-storage
+        emptyDir: {}
+      - name: cert-api
+        secret:
+          secretName: openbalena-pki-api
       {{- with .Values.delta.nodeSelector  }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
