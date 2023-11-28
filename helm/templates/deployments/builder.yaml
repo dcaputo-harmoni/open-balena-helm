@@ -59,6 +59,8 @@ spec:
           value: "{{ .Values.global.hostname }}"
         - name: API_HOST
           value: "api.{{ .Values.global.hostname }}"
+        - name: DELTA_HOST
+          value: "delta.{{ .Values.global.hostname }}"
         {{- if .Values.builder.amd64.enabled }}
         - name: DOCKER_HOST_AMD64
           value: "tcp://{{ .Chart.Name }}-builder-amd64:2375"
