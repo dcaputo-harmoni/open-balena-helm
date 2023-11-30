@@ -10,7 +10,7 @@ global:
     password: "docker"
 
   s3:
-    buckets: "registry-data;image-data"
+    buckets: "registry-data;image-data;loki"
     registryBucket: "registry-data"
     registryStoragePath: "/data"
     imageBucket: "image-data"
@@ -353,8 +353,8 @@ loki:
         insecure: true
         s3ForcePathStyle: true
         region: us-east-1
-        accessKeyId: \${S3_LOKI_ACCESS_KEY_ID}
-        secretAccessKey: \${S3_LOKI_SECRET_ACCESS_KEY}
+        accessKeyId: ${S3_LOKI_ACCESS_KEY_ID}
+        secretAccessKey: ${S3_LOKI_SECRET_ACCESS_KEY}
       bucketNames:
         admin: loki
         chunks: loki
