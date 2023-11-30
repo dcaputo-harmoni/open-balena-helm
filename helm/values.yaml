@@ -328,8 +328,8 @@ haproxy:
     ingressClass: "openbalena-haproxy"
     ingressClassResource:
       enabled: true
-#    logs:
-#      enabled: true
+    logs:
+      enabled: true
     config:
       config-proxy: |-
           _front__tls
