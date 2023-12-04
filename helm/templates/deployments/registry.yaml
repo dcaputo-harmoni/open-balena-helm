@@ -136,6 +136,10 @@ spec:
                 - "sh"
                 - "-c"
                 - >
+                  echo '[Unit]\nDescription=Registry garbage-collect service\n\n[Service]\nType=oneshot\nExecStart=/usr/local/bin/docker-registry garbage-collect /etc/docker-registry.yml -m' > /etc/systemd/system/registry-garbage-collect.service;
+                  echo '[Unit]\nDescription=Registry garbage-collect timer\n\n[Timer]\nUnit=registry-garbage-collect.service\nOnCalendar=Sat 20:00\n\n[Install]\nWantedBy=timers.target' > /etc/systemd/system/registry-garbage-collect.timer;
+                  ln -s /etc/systemd/system/registry-garbage-collect.timer /etc/systemd/system/timers.target.wants/registry-garbage-collect.timer;
+                  systemctl enable --now registry-garbage-collect.timer;
                   mkdir /balena;
                   touch /balena/{{ .Values.global.hostname }}.env;
                   mkdir /certs/private;

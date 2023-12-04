@@ -108,6 +108,7 @@ registry:
     pullPolicy: IfNotPresent
 
   disableRedirect: false
+  disableUploadPurging: true
 
   labels: {}
   annotations: {}
