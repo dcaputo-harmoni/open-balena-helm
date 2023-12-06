@@ -64,8 +64,7 @@ api:
 
   service:
     labels: {}
-    annotations:
-      haproxy-ingress.github.io/timeout-server: "75s"
+    annotations: {}
     externalIPs: []
 
   sentry-dsn: ""
@@ -338,10 +337,10 @@ haproxy:
             acl is_ssl req.ssl_ver 2:3.4
             use_backend {{ .Release.Namespace }}_openbalena-vpn_443 if !is_ssl
             # END::Redirect to openBalena VPN
-#      timeout-server: "15m"
-#      timeout-server-fin: "15m"
-#      timeout-client: "15m"
-#      timeout-client-fin: "15m"
+      timeout-server: "75s"
+      timeout-server-fin: "75s"
+      timeout-client: "75s"
+      timeout-client-fin: "75s"
     nodeSelector:
       kubernetes.io/arch: amd64
 
