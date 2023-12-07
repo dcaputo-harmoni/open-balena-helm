@@ -26,3 +26,7 @@ dependencies:
   version: 6.15.3
   alias: promtail
   repository: "https://grafana.github.io/helm-charts"
+- name: reloader
+  version: 1.0.52
+  alias: reloader
+  repository: "https://stakater.github.io/stakater-charts"

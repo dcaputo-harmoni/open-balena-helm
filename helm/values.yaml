@@ -55,7 +55,8 @@ api:
     pullPolicy: IfNotPresent
 
   labels: {}
-  annotations: {}
+  annotations:
+    reloader.stakater.com/auto: "true"
   affinity: {}
   resources: {}
   nodeSelector:
@@ -86,7 +87,8 @@ vpn:
     pullPolicy: IfNotPresent
 
   labels: {}
-  annotations: {}
+  annotations:
+    reloader.stakater.com/auto: "true"
   affinity: {}
   resources: {}
   nodeSelector:
@@ -110,7 +112,8 @@ registry:
   disableUploadPurging: true
 
   labels: {}
-  annotations: {}
+  annotations:
+    reloader.stakater.com/auto: "true"
   affinity: {}
   resources: {}
   nodeSelector:
@@ -130,7 +133,8 @@ s3:
     pullPolicy: IfNotPresent
 
   labels: {}
-  annotations: {}
+  annotations:
+    reloader.stakater.com/auto: "true"
   affinity: {}
   resources: {}
   nodeSelector:
@@ -152,7 +156,8 @@ db:
     pullPolicy: IfNotPresent
 
   labels: {}
-  annotations: {}
+  annotations:
+    reloader.stakater.com/auto: "true"
   affinity: {}
   resources: {}
   nodeSelector:
@@ -213,7 +218,8 @@ builder:
     pullPolicy: Always
 
   labels: {}
-  annotations: {}
+  annotations:
+    reloader.stakater.com/auto: "true"
   affinity: {}
   resources: {}
   nodeSelector:
@@ -284,7 +290,8 @@ delta:
     pullPolicy: Always
 
   labels: {}
-  annotations: {}
+  annotations:
+    reloader.stakater.com/auto: "true"
   affinity: {}
   resources: {}
   nodeSelector:
@@ -309,7 +316,8 @@ helper:
     pullPolicy: Always
 
   labels: {}
-  annotations: {}
+  annotations:
+    reloader.stakater.com/auto: "true"
   affinity: {}
   resources: {}
   nodeSelector:
@@ -344,6 +352,12 @@ haproxy:
     nodeSelector:
       kubernetes.io/arch: amd64
 
+reloader:
+  reloader:
+    deployment:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+
 loki:
   loki:
     auth_enabled: false
@@ -362,6 +376,8 @@ loki:
     limits_config:
       ingestion_rate_mb: 100
       ingestion_burst_size_mb: 100
+      max_entries_limit_per_query: 0
+      max_global_streams_per_user: 0
   gateway:
     replicas: 1
     nodeSelector:
@@ -370,6 +386,8 @@ loki:
     replicas: 2
     nodeSelector:
       kubernetes.io/arch: amd64
+    annotations:
+      reloader.stakater.com/auto: "true"
     extraArgs:
       - '-config.expand-env=true'
     extraEnv:
@@ -394,6 +412,8 @@ loki:
     replicas: 2
     nodeSelector:
       kubernetes.io/arch: amd64
+    annotations:
+      reloader.stakater.com/auto: "true"
     extraArgs:
       - '-config.expand-env=true'
     extraEnv:
@@ -411,6 +431,8 @@ loki:
     replicas: 2
     nodeSelector:
       kubernetes.io/arch: amd64
+    annotations:
+      reloader.stakater.com/auto: "true"
     extraArgs:
       - '-config.expand-env=true'
     extraEnv:
