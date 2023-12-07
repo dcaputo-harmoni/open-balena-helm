@@ -22,3 +22,7 @@ dependencies:
   version: 5.35.0
   alias: loki
   repository: "https://grafana.github.io/helm-charts"
+- name: promtail
+  version: 6.15.3
+  alias: promtail
+  repository: "https://grafana.github.io/helm-charts"

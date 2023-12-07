@@ -150,6 +150,7 @@ spec:
                   ln -s /certs/api/certificate /certs/private/api.{{ .Values.global.hostname }}.pem;
                   ln -s /certs/api/private_key /certs/private/api.{{ .Values.global.hostname }}.key;
                   openssl ec -pubout -outform der -in /certs/api/private_key | sha256sum | head -c 60 | xxd -r -p | base32 | fold -w4 | paste -sd : | tr -d '\n' > /certs/private/api.{{ .Values.global.hostname }}.kid;
+                  echo 'module(load="imjournal")\nmodule(load="mmjsonparse")\n$imjournalRatelimitInterval 0\n$imjournalRatelimitBurst 0\n*.* action(type="omfwd" Target="openbalena-promtail-syslog" Port="1514" Protocol="tcp" Template="RSYSLOG_SyslogProtocol23Format" TCP_Framing="octet-counted")' > /etc/rsyslog.d/00-promtail-relay.conf;
       volumes:
       - name: run
         emptyDir:
