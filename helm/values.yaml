@@ -5,6 +5,10 @@ global:
   production-mode: false
   ssh-authorized-keys: ""
 
+  promtail:
+    server: "openbalena-promtail-syslog"
+    port: 1514
+
   db:
     user: "docker"
     password: "docker"
@@ -62,7 +66,6 @@ api:
   nodeSelector:
     kubernetes.io/arch: amd64
 
-
   service:
     labels: {}
     annotations: {}
@@ -70,7 +73,7 @@ api:
 
   sentry-dsn: ""
 
-  lokiHost: loki-write
+  lokiHost: openbalena-loki-write
   lokiPort: 9095
   lokiWritePct: 100
 
@@ -209,6 +212,65 @@ redis:
   storage: "10Gi"
   storageClass:
 
+ui:
+  replicas: 1
+  labels: {}
+  annotations:
+    reloader.stakater.com/auto: "true"
+  affinity: {}
+  resources: {}
+  nodeSelector:
+    kubernetes.io/arch: amd64
+  service:
+    labels: {}
+    annotations: {}
+    externalIPs: []
+  sentry-dsn: ""
+  image:
+    repository: harmonidcaputo/open-balena-ui
+    tag: latest
+    pullPolicy: Always
+
+remote:
+  replicas: 1
+  labels: {}
+  annotations:
+    reloader.stakater.com/auto: "true"
+  affinity: {}
+  resources: {}
+  nodeSelector:
+    kubernetes.io/arch: amd64
+  service:
+    labels: {}
+    annotations: {}
+    externalIPs: []
+  sentry-dsn: ""
+  image:
+    repository: harmonidcaputo/open-balena-remote
+    tag: latest
+    pullPolicy: Always
+
+postgrest:
+  replicas: 1
+  labels: {}
+  annotations:
+    reloader.stakater.com/auto: "true"
+  affinity: {}
+  resources: {}
+  nodeSelector:
+    kubernetes.io/arch: amd64
+  service:
+    labels: {}
+    annotations: {}
+    externalIPs: []
+  sentry-dsn: ""
+  image:
+    repository: harmonidcaputo/open-balena-postgrest
+    tag: latest
+    pullPolicy: Always
+  dbHost: openbalena-db.openbalena
+  dbPort: 5432
+
 builder:
   enabled: true
   replicas: 1
@@ -336,6 +398,17 @@ haproxy:
     ingressClass: "openbalena-haproxy"
     ingressClassResource:
       enabled: true
+    tcp:
+      10000: openbalena/openbalena-remote:10000:PROXY-V2::openbalena/openbalena-tls
+      10001: openbalena/openbalena-remote:10001:PROXY-V2::openbalena/openbalena-tls
+      10002: openbalena/openbalena-remote:10002:PROXY-V2::openbalena/openbalena-tls
+      10003: openbalena/openbalena-remote:10003:PROXY-V2::openbalena/openbalena-tls
+      10004: openbalena/openbalena-remote:10004:PROXY-V2::openbalena/openbalena-tls
+      10005: openbalena/openbalena-remote:10005:PROXY-V2::openbalena/openbalena-tls
+      10006: openbalena/openbalena-remote:10006:PROXY-V2::openbalena/openbalena-tls
+      10007: openbalena/openbalena-remote:10007:PROXY-V2::openbalena/openbalena-tls
+      10008: openbalena/openbalena-remote:10008:PROXY-V2::openbalena/openbalena-tls
+      10009: openbalena/openbalena-remote:10009:PROXY-V2::openbalena/openbalena-tls
     logs:
       enabled: true
     config:
@@ -359,6 +432,7 @@ reloader:
         kubernetes.io/arch: amd64
 
 loki:
+  nameOverride: openbalena-loki
   loki:
     auth_enabled: false
     storage:
@@ -407,7 +481,7 @@ loki:
       storageClass: azuredisk-sc
       selector:
         matchLabels: 
-          app: loki-backend
+          app: openbalena-loki-backend
   read:
     replicas: 2
     nodeSelector:
@@ -452,7 +526,7 @@ loki:
       storageClass: azuredisk-sc
       selector:
         matchLabels: 
-          app: loki-write
+          app: openbalena-loki-write
   monitoring:
     lokiCanary:
       enabled: false
@@ -474,6 +548,8 @@ promtail:
       containerPort: 1514
       protocol: TCP
   config:
+    clients:
+      - url: http://openbalena-loki-gateway/loki/api/v1/push
     logFormat: json
     snippets:
       extraScrapeConfigs: |

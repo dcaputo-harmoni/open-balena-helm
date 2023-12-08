@@ -18,6 +18,9 @@ spec:
     - {{ .Values.global.hostname }}
     - api.{{ .Values.global.hostname }}
     - registry.{{ .Values.global.hostname }}
+    - admin.{{ .Values.global.hostname }}
+    - postgrest.{{ .Values.global.hostname }}
+    - remote.{{ .Values.global.hostname }}
     {{- if .Values.s3.enabled }}
     - s3.{{ .Values.global.hostname }}
     {{- end }}
@@ -78,6 +81,36 @@ spec:
             port:
               number: 80
   {{- end }}
+  - host: admin.{{ .Values.global.hostname }}
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: {{ include "openbalena.fullname" . }}-ui
+            port:
+              number: 80
+  - host: postgrest.{{ .Values.global.hostname }}
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: {{ include "openbalena.fullname" . }}-postgrest
+            port:
+              number: 80
+  - host: remote.{{ .Values.global.hostname }}
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: {{ include "openbalena.fullname" . }}-remote
+            port:
+              number: 80
   {{- if .Values.builder.enabled }}
   - host: builder.{{ .Values.global.hostname }}
     http:

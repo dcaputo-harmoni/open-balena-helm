@@ -40,6 +40,17 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      initContainers:
+      - name: wait-for-promtail
+        image: busybox:latest
+        command:
+        - /bin/sh
+        - -c
+        - >
+          until nc -vz {{ .Values.global.promtail.server }} {{ .Values.global.promtail.port }};
+            do echo "Waiting for {{ .Values.global.promtail.server }}:{{ .Values.global.promtail.port }}";
+            sleep 1;
+          done
       containers:
       - name: {{ .Chart.Name }}-s3
         image: {{ .Values.s3.image.repository }}:{{ .Values.s3.image.tag }}

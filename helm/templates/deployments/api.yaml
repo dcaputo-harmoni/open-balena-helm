@@ -39,6 +39,19 @@ spec:
         {{- end }}
     spec:
       initContainers:
+      - name: generate-api-kid
+        image: ubuntu:22.04
+        volumeMounts:
+        - mountPath: /cert-api
+          name: cert-api
+        - mountPath: /cert-api-kid
+          name: cert-api-kid
+        command:
+        - /bin/bash
+        - -c
+        - >
+          apt-get update && apt-get install -y openssl xxd;
+          openssl ec -pubout -outform der -in /cert-api/private_key | sha256sum | head -c 60 | xxd -r -p | base32 | fold -w4 | paste -sd : | tr -d '\n' > /cert-api-kid/api_kid
       - name: wait-for-db
         image: postgres:12
         env:
@@ -55,7 +68,7 @@ spec:
             echo "Waiting for openbalena-db...";
             sleep 5;
           done
-      - name: wait-for-loki
+      - name: wait-for-loki-write
         image: busybox:latest
         command:
         - /bin/sh
@@ -65,19 +78,16 @@ spec:
             do echo "Waiting for {{ .Values.api.lokiHost }}:{{ .Values.api.lokiPort }}";
             sleep 1;
           done
-      - name: generate-api-kid
-        image: ubuntu:22.04
-        volumeMounts:
-        - mountPath: /cert-api
-          name: cert-api
-        - mountPath: /cert-api-kid
-          name: cert-api-kid
+      - name: wait-for-promtail
+        image: busybox:latest
         command:
-        - /bin/bash
+        - /bin/sh
         - -c
         - >
-          apt-get update && apt-get install -y openssl xxd;
-          openssl ec -pubout -outform der -in /cert-api/private_key | sha256sum | head -c 60 | xxd -r -p | base32 | fold -w4 | paste -sd : | tr -d '\n' > /cert-api-kid/api_kid
+          until nc -vz {{ .Values.global.promtail.server }} {{ .Values.global.promtail.port }};
+            do echo "Waiting for {{ .Values.global.promtail.server }}:{{ .Values.global.promtail.port }}";
+            sleep 1;
+          done
       containers:
       - name: {{ .Chart.Name }}-api
         image: {{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}
