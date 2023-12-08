@@ -563,11 +563,11 @@ promtail:
               job: systemd-journal
           relabel_configs:
             - source_labels: ['__journal__hostname']
-              target_label: hostname
+              target_label: pod
+            - source_labels: ['__journal__systemd_unit']
+              target_label: app
             - source_labels: ['__journal_priority_keyword']
               target_label: level
-            - source_labels: ['__journal__systemd_unit']
-              target_label: unit
         - job_name: pod_syslog
           syslog:
             listen_address: 0.0.0.0:1514
@@ -575,11 +575,11 @@ promtail:
               job: syslog
           relabel_configs:
             - source_labels: ['__syslog_message_hostname']
-              target_label: hostname
+              target_label: pod
+            - source_labels: ['__syslog_message_app_name']
+              target_label: app
             - source_labels: ['__syslog_message_severity']
               target_label: level
-            - source_labels: ['__syslog_message_app_name']
-              target_label: unit
             - source_labels: ['__syslog_message_facility']
               target_label: facility
   extraVolumes:
