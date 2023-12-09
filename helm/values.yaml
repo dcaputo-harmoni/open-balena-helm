@@ -456,12 +456,12 @@ loki:
     replicas: 1
     nodeSelector:
       kubernetes.io/arch: amd64
-    affinity: {}
+    affinity: []
   backend:
     replicas: 2
     nodeSelector:
       kubernetes.io/arch: amd64
-    affinity: {}
+    affinity: []
     annotations:
       reloader.stakater.com/auto: "true"
     extraArgs:
@@ -488,7 +488,7 @@ loki:
     replicas: 2
     nodeSelector:
       kubernetes.io/arch: amd64
-    affinity: {}
+    affinity: []
     annotations:
       reloader.stakater.com/auto: "true"
     extraArgs:
@@ -508,7 +508,7 @@ loki:
     replicas: 2
     nodeSelector:
       kubernetes.io/arch: amd64
-    affinity: {}
+    affinity: []
     annotations:
       reloader.stakater.com/auto: "true"
     extraArgs:
