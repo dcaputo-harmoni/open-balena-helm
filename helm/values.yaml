@@ -2,7 +2,7 @@ global:
   hostname: ""
   email: "admin@openbalena.io"
   password: "password"
-  production-mode: false
+  production-mode: true
   ssh-authorized-keys: ""
 
   promtail:
@@ -11,7 +11,7 @@ global:
 
   db:
     user: "docker"
-    password: "docker"
+    password: "password"
 
   s3:
     buckets: "registry-data;image-data;loki"
@@ -456,10 +456,12 @@ loki:
     replicas: 1
     nodeSelector:
       kubernetes.io/arch: amd64
+    affinity: {}
   backend:
     replicas: 2
     nodeSelector:
       kubernetes.io/arch: amd64
+    affinity: {}
     annotations:
       reloader.stakater.com/auto: "true"
     extraArgs:
@@ -478,7 +480,7 @@ loki:
     persistence:
       enableStatefulSetAutoDeletePVC: true
       size: 10Gi
-      storageClass: azuredisk-sc
+      storageClass:
       selector:
         matchLabels: 
           app: openbalena-loki-backend
@@ -486,6 +488,7 @@ loki:
     replicas: 2
     nodeSelector:
       kubernetes.io/arch: amd64
+    affinity: {}
     annotations:
       reloader.stakater.com/auto: "true"
     extraArgs:
@@ -505,6 +508,7 @@ loki:
     replicas: 2
     nodeSelector:
       kubernetes.io/arch: amd64
+    affinity: {}
     annotations:
       reloader.stakater.com/auto: "true"
     extraArgs:
@@ -523,7 +527,7 @@ loki:
     persistence:
       enableStatefulSetAutoDeletePVC: true
       size: 10Gi
-      storageClass: azuredisk-sc
+      storageClass:
       selector:
         matchLabels: 
           app: openbalena-loki-write
