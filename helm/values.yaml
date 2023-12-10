@@ -44,6 +44,7 @@ secrets:
 issuers:
   acme:
     enabled: true
+    name: openbalena-certificate-issuer
     server: "https://acme-v02.api.letsencrypt.org/directory"
     email: "validemail@yourdomain.com"
     nodeSelector:

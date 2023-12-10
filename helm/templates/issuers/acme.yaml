@@ -2,7 +2,7 @@
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: openbalena-certificate-issuer
+  name: {{ .Values.issuers.acme.name }}
   namespace: openbalena
 spec:
   acme:
@@ -13,7 +13,7 @@ spec:
     solvers:
     - http01:
         ingress:
-          class: openbalena-haproxy
+          class: {{ .Values.haproxy.controller.ingressClass }}
           podTemplate:
             spec:
               {{- with .Values.issuers.acme.nodeSelector  }}

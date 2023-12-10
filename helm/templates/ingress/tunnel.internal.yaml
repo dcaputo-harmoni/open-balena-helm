@@ -13,6 +13,9 @@ metadata:
     {{- with .Values.ingress.tunnel.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
+    {{- if .Values.issuers.acme.enabled }}
+    cert-manager.io/issuer: {{ .Values.issuers.acme.name }}
+    {{- end }}
 spec:
   tls:
   - secretName: {{ include "openbalena.fullname" . }}-tunnel-tls
