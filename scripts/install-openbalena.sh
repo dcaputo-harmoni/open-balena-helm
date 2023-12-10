@@ -55,8 +55,5 @@ cp ${CERTS_DIR}/vpn/dh.pem ${HELM_CERTS_DIR}/vpn-dh.pem
 
 # Install openbalena
 helm install openbalena $(dirname "$0")/../helm -f $(dirname "$0")/../config/values.yaml -n openbalena --dependency-update --wait \
-    --set ingress.annotations."cert-manager\.io/issuer"=openbalena-certificate-issuer
-
-# Install openbalena cert issuer
-helm install openbalena-cert-issuer $(dirname "$0")/cert-issuer -n openbalena --wait \
-    --set certEmail=$OPENBALENA_CERT_EMAIL
+    --set ingress.annotations."cert-manager\.io/issuer"=openbalena-certificate-issuer \
+    --set issuers.acme.email=$OPENBALENA_CERT_EMAIL

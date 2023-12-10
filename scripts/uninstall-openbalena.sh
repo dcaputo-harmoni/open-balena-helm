@@ -18,6 +18,3 @@ done
 
 # Uninstall openbalena
 helm uninstall openbalena -n openbalena --wait
-
-# Delete certificate issuer
-helm uninstall openbalena-cert-issuer -n openbalena --wait

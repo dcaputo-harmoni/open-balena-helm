@@ -1,0 +1,23 @@
+{{- if .Values.issuers.acme.enabled }}
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: openbalena-certificate-issuer
+  namespace: openbalena
+spec:
+  acme:
+    server: {{ .Values.issuers.acme.server }}
+    email: {{ .Values.issuers.acme.email }}
+    privateKeySecretRef:
+      name: openbalena-certificate-key
+    solvers:
+    - http01:
+        ingress:
+          class: openbalena-haproxy
+          podTemplate:
+            spec:
+              {{- with .Values.issuers.acme.nodeSelector  }}
+              nodeSelector:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+{{- end }}

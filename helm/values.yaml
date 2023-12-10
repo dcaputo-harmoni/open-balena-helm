@@ -41,6 +41,14 @@ global:
 secrets:
   create: true
 
+issuers:
+  acme:
+    enabled: true
+    server: "https://acme-v02.api.letsencrypt.org/directory"
+    email: "validemail@yourdomain.com"
+    nodeSelector:
+      kubernetes.io/arch: amd64
+
 ingress:
   ingressClassName: openbalena-haproxy
   annotations: {}
