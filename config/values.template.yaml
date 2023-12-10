@@ -1,4 +1,5 @@
 global:
+  hostname: "${OPENBALENA_HOST_NAME}"
   email: "${OPENBALENA_SUPERUSER_EMAIL}"
   password: "${OPENBALENA_SUPERUSER_PASSWORD}"
   ssh-authorized-keys: "${OPENBALENA_SSH_AUTHORIZED_KEYS}"

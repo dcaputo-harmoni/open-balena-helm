@@ -4,9 +4,9 @@
 kubectl config use-context docker-desktop
 
 # Delete Openbalena PVCs in background
-pvcs=$(kubectl get pvc --namespace openbalena | grep openbalena | cut -f1 -d ' ')
+pvcs=$(kubectl get pvc -n openbalena | grep openbalena | cut -f1 -d ' ')
 for i in $pvcs; do
-  kubectl delete pvc $i --namespace openbalena &
+  kubectl delete pvc $i -n openbalena &
 done
 
 # Allow openbalena pvs to be reclaimed
@@ -17,9 +17,7 @@ for i in $pvs; do
 done
 
 # Uninstall openbalena
-helm uninstall openbalena --namespace openbalena --wait
+helm uninstall openbalena -n openbalena --wait
 
 # Delete certificate issuer
-#kubectl delete -f $(dirname "$0")/cert-issuers/openbalena-cert-issuer.yaml
-
-kubectl delete namespace openbalena
+helm uninstall openbalena-cert-issuer -n openbalena --wait
