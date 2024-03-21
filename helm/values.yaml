@@ -49,7 +49,11 @@ issuers:
     email: "validemail@yourdomain.com"
     nodeSelector:
       kubernetes.io/arch: amd64
-
+    tolerations:
+    - key: kubernetes.azure.com/scalesetpriority
+      operator: Equal
+      value: spot 
+      effect: NoSchedule
 ingress:
   ingressClassName: openbalena-haproxy
   annotations: {}
@@ -74,6 +78,11 @@ api:
   resources: {}
   nodeSelector:
     kubernetes.io/arch: amd64
+  tolerations:
+  - key: kubernetes.azure.com/scalesetpriority
+    operator: Equal
+    value: spot 
+    effect: NoSchedule
 
   service:
     labels: {}
@@ -105,6 +114,11 @@ vpn:
   resources: {}
   nodeSelector:
     kubernetes.io/arch: amd64
+  tolerations:
+  - key: kubernetes.azure.com/scalesetpriority
+    operator: Equal
+    value: spot 
+    effect: NoSchedule
 
   service:
     labels: {}
@@ -130,6 +144,11 @@ registry:
   resources: {}
   nodeSelector:
     kubernetes.io/arch: amd64
+  tolerations:
+  - key: kubernetes.azure.com/scalesetpriority
+    operator: Equal
+    value: spot 
+    effect: NoSchedule
 
   service:
     labels: {}
@@ -151,6 +170,11 @@ s3:
   resources: {}
   nodeSelector:
     kubernetes.io/arch: amd64
+  tolerations:
+  - key: kubernetes.azure.com/scalesetpriority
+    operator: Equal
+    value: spot 
+    effect: NoSchedule
 
   service:
     labels: {}
@@ -174,6 +198,11 @@ db:
   resources: {}
   nodeSelector:
     kubernetes.io/arch: amd64
+  tolerations:
+  - key: kubernetes.azure.com/scalesetpriority
+    operator: Equal
+    value: spot 
+    effect: NoSchedule
 
   service:
     labels: {}
@@ -212,6 +241,11 @@ redis:
   resources: {}
   nodeSelector:
     kubernetes.io/arch: amd64
+  tolerations:
+  - key: kubernetes.azure.com/scalesetpriority
+    operator: Equal
+    value: spot 
+    effect: NoSchedule
 
   service:
     labels: {}
@@ -230,6 +264,11 @@ ui:
   resources: {}
   nodeSelector:
     kubernetes.io/arch: amd64
+  tolerations:
+  - key: kubernetes.azure.com/scalesetpriority
+    operator: Equal
+    value: spot 
+    effect: NoSchedule
   service:
     labels: {}
     annotations: {}
@@ -249,6 +288,11 @@ remote:
   resources: {}
   nodeSelector:
     kubernetes.io/arch: amd64
+  tolerations:
+  - key: kubernetes.azure.com/scalesetpriority
+    operator: Equal
+    value: spot 
+    effect: NoSchedule
   service:
     labels: {}
     annotations: {}
@@ -268,6 +312,11 @@ postgrest:
   resources: {}
   nodeSelector:
     kubernetes.io/arch: amd64
+  tolerations:
+  - key: kubernetes.azure.com/scalesetpriority
+    operator: Equal
+    value: spot 
+    effect: NoSchedule
   service:
     labels: {}
     annotations: {}
@@ -295,7 +344,11 @@ builder:
   resources: {}
   nodeSelector:
     kubernetes.io/arch: amd64
-
+  tolerations:
+  - key: kubernetes.azure.com/scalesetpriority
+    operator: Equal
+    value: spot 
+    effect: NoSchedule
   # Need extended timeout for build and delta operations
   service:
     labels: {}
@@ -320,6 +373,11 @@ builder:
     resources: {}
     nodeSelector:
       kubernetes.io/arch: amd64
+    tolerations:
+    - key: kubernetes.azure.com/scalesetpriority
+      operator: Equal
+      value: spot 
+      effect: NoSchedule
 
     service:
       labels: {}
@@ -343,6 +401,11 @@ builder:
     resources: {}
     nodeSelector:
       kubernetes.io/arch: arm64
+    tolerations:
+    - key: kubernetes.azure.com/scalesetpriority
+      operator: Equal
+      value: spot 
+      effect: NoSchedule
 
     service:
       labels: {}
@@ -367,6 +430,11 @@ delta:
   resources: {}
   nodeSelector:
     kubernetes.io/arch: amd64
+  tolerations:
+  - key: kubernetes.azure.com/scalesetpriority
+    operator: Equal
+    value: spot 
+    effect: NoSchedule
 
   # Need extended timeout for build and delta operations
   service:
@@ -393,6 +461,11 @@ helper:
   resources: {}
   nodeSelector:
     kubernetes.io/arch: amd64
+  tolerations:
+  - key: kubernetes.azure.com/scalesetpriority
+    operator: Equal
+    value: spot 
+    effect: NoSchedule
 
   service:
     labels: {}
@@ -433,12 +506,22 @@ haproxy:
       timeout-client-fin: "75s"
     nodeSelector:
       kubernetes.io/arch: amd64
+    tolerations:
+    - key: kubernetes.azure.com/scalesetpriority
+      operator: Equal
+      value: spot 
+      effect: NoSchedule
 
 reloader:
   reloader:
     deployment:
       nodeSelector:
         kubernetes.io/arch: amd64
+      tolerations:
+      - key: kubernetes.azure.com/scalesetpriority
+        operator: Equal
+        value: spot 
+        effect: NoSchedule
 
 loki:
   nameOverride: openbalena-loki
@@ -465,11 +548,21 @@ loki:
     replicas: 1
     nodeSelector:
       kubernetes.io/arch: amd64
+    tolerations:
+    - key: kubernetes.azure.com/scalesetpriority
+      operator: Equal
+      value: spot 
+      effect: NoSchedule
     affinity: []
   backend:
     replicas: 2
     nodeSelector:
       kubernetes.io/arch: amd64
+    tolerations:
+    - key: kubernetes.azure.com/scalesetpriority
+      operator: Equal
+      value: spot 
+      effect: NoSchedule
     affinity: []
     annotations:
       reloader.stakater.com/auto: "true"
@@ -497,6 +590,11 @@ loki:
     replicas: 2
     nodeSelector:
       kubernetes.io/arch: amd64
+    tolerations:
+    - key: kubernetes.azure.com/scalesetpriority
+      operator: Equal
+      value: spot 
+      effect: NoSchedule
     affinity: []
     annotations:
       reloader.stakater.com/auto: "true"
@@ -517,6 +615,11 @@ loki:
     replicas: 2
     nodeSelector:
       kubernetes.io/arch: amd64
+    tolerations:
+    - key: kubernetes.azure.com/scalesetpriority
+      operator: Equal
+      value: spot 
+      effect: NoSchedule
     affinity: []
     annotations:
       reloader.stakater.com/auto: "true"

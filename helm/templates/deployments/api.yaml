@@ -308,3 +308,7 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.api.tolerations  }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
