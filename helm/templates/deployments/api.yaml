@@ -278,8 +278,8 @@ spec:
                   ln -s /certs/api-kid/api_kid /certs/private/api.{{ .Values.global.hostname }}.kid;
                   echo 'module(load="imjournal")\nmodule(load="mmjsonparse")\n$imjournalRatelimitInterval 0\n$imjournalRatelimitBurst 0\n*.* action(type="omfwd" Target="openbalena-promtail-syslog" Port="1514" Protocol="tcp" Template="RSYSLOG_SyslogProtocol23Format" TCP_Framing="octet-counted")' > /etc/rsyslog.d/00-promtail-relay.conf;
                   cd /usr/src/app;
-                  wget -q https://github.com/balena-io/open-balena-api/pull/1468/commits/0712973575e0ab6d54119f9c9538d473b95330f9.patch;
-                  patch -p1 < 0712973575e0ab6d54119f9c9538d473b95330f9.patch;
+                  wget -q https://github.com/balena-io/open-balena-api/commit/bb9254f4a7d44aed712463e3c418e915129a43f9.patch;
+                  patch -p1 < bb9254f4a7d44aed712463e3c418e915129a43f9.patch;
                   wget -q https://github.com/balena-io/open-balena-api/pull/1491/commits/f5161acf0c72242a663acc0bee5216210684a542.patch;
                   patch -p1 < f5161acf0c72242a663acc0bee5216210684a542.patch;
       volumes:
