@@ -278,6 +278,7 @@ ui:
     repository: harmonidcaputo/open-balena-ui
     tag: latest
     pullPolicy: Always
+  bannerImage:
 
 remote:
   replicas: 1

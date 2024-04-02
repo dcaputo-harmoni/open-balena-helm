@@ -83,6 +83,8 @@ spec:
           value: https://api.{{ .Values.global.hostname }}
         - name: REACT_APP_OPEN_BALENA_API_VERSION
           value: {{ .Values.api.image.tag }}
+        - name: REACT_APP_BANNER_IMAGE
+          value: {{ .Values.ui.bannerImage }}
 
       {{- with .Values.ui.nodeSelector  }}
       nodeSelector:

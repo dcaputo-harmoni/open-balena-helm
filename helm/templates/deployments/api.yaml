@@ -280,8 +280,10 @@ spec:
                   cd /usr/src/app;
                   wget -q https://github.com/balena-io/open-balena-api/commit/bb9254f4a7d44aed712463e3c418e915129a43f9.patch;
                   patch -p1 < bb9254f4a7d44aed712463e3c418e915129a43f9.patch;
-                  wget -q https://github.com/balena-io/open-balena-api/pull/1491/commits/f5161acf0c72242a663acc0bee5216210684a542.patch;
+                  wget -q https://github.com/balena-io/open-balena-api/commit/f5161acf0c72242a663acc0bee5216210684a542.patch;
                   patch -p1 < f5161acf0c72242a663acc0bee5216210684a542.patch;
+                  wget -q https://github.com/balena-io/open-balena-api/commit/242ca68fa4e371e0aa0a5ff9d5682ee28fe89fd9.patch;
+                  patch -p1 < 242ca68fa4e371e0aa0a5ff9d5682ee28fe89fd9.patch;
       volumes:
       - name: run
         emptyDir:
