@@ -16,12 +16,12 @@ spec:
           class: {{ .Values.haproxy.controller.ingressClass }}
           podTemplate:
             spec:
-              {{- with .Values.issuers.acme.nodeSelector  }}
+              {{- with .Values.issuers.acme.nodeSelector }}
               nodeSelector:
                 {{- toYaml . | nindent 16 }}
               {{- end }}
-              {{- with .Values.issuers.acme.tolerations  }}
+              {{- with .Values.issuers.acme.tolerations }}
               tolerations:
-                {{- toYaml . | nindent 8 }}
+                {{- toYaml . | nindent 16 }}
               {{- end }}
 {{- end }}
