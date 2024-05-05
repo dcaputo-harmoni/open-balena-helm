@@ -581,7 +581,7 @@ loki:
             name: openbalena-s3-keys
             key: secret-key
     persistence:
-      enableStatefulSetAutoDeletePVC: true
+      enableStatefulSetAutoDeletePVC: false
       size: 10Gi
       storageClass:
       selector:
@@ -638,7 +638,7 @@ loki:
             name: openbalena-s3-keys
             key: secret-key
     persistence:
-      enableStatefulSetAutoDeletePVC: true
+      enableStatefulSetAutoDeletePVC: false
       size: 10Gi
       storageClass:
       selector:
