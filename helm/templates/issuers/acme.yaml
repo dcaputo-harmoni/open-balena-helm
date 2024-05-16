@@ -9,7 +9,7 @@ spec:
     server: {{ .Values.issuers.acme.server }}
     email: {{ .Values.issuers.acme.email }}
     privateKeySecretRef:
-      name: openbalena-certificate-key
+      name: openbalena-tls-certificate
     solvers:
     - http01:
         ingress:
