@@ -98,8 +98,13 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.delta.tolerations  }}
+      {{- if or .Values.delta.tolerations .Values.global.tolerations }}
       tolerations:
-        {{- toYaml . | nindent 8 }}
+        {{- if .Values.delta.tolerations }}
+        {{- toYaml .Values.delta.tolerations | nindent 8 }}
+        {{- end }}
+        {{- if .Values.global.tolerations }}
+        {{- toYaml .Values.global.tolerations | nindent 8 }}
+        {{- end }}
       {{- end }}
 {{- end }}

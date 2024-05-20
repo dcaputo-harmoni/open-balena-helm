@@ -90,7 +90,12 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.ui.tolerations  }}
+      {{- if or .Values.ui.tolerations .Values.global.tolerations }}
       tolerations:
-        {{- toYaml . | nindent 8 }}
+        {{- if .Values.ui.tolerations }}
+        {{- toYaml .Values.ui.tolerations | nindent 8 }}
+        {{- end }}
+        {{- if .Values.global.tolerations }}
+        {{- toYaml .Values.global.tolerations | nindent 8 }}
+        {{- end }}
       {{- end }}

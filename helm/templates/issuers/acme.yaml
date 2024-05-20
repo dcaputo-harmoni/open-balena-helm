@@ -20,8 +20,13 @@ spec:
               nodeSelector:
                 {{- toYaml . | nindent 16 }}
               {{- end }}
-              {{- with .Values.issuers.acme.tolerations }}
+              {{- if or .Values.issuers.acme.tolerations .Values.global.tolerations }}
               tolerations:
-                {{- toYaml . | nindent 16 }}
+                {{- if .Values.issuers.acme.tolerations }}
+                {{- toYaml .Values.issuers.acme.tolerations | nindent 16 }}
+                {{- end }}
+                {{- if .Values.global.tolerations }}
+                {{- toYaml .Values.global.tolerations | nindent 16 }}
+                {{- end }}
               {{- end }}
 {{- end }}

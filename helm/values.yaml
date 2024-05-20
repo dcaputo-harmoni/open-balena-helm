@@ -38,6 +38,8 @@ global:
     token-auth-builder-token:
     vpn-dhparams:
 
+  tolerations:
+
 secrets:
   create: true
 
@@ -48,12 +50,7 @@ issuers:
     server: "https://acme-v02.api.letsencrypt.org/directory"
     email: "validemail@yourdomain.com"
     nodeSelector:
-      kubernetes.io/arch: amd64
     tolerations:
-    - key: kubernetes.azure.com/scalesetpriority
-      operator: Equal
-      value: spot 
-      effect: NoSchedule
 ingress:
   ingressClassName: openbalena-haproxy
   annotations: {}
@@ -77,12 +74,7 @@ api:
   affinity: {}
   resources: {}
   nodeSelector:
-    kubernetes.io/arch: amd64
   tolerations:
-  - key: kubernetes.azure.com/scalesetpriority
-    operator: Equal
-    value: spot 
-    effect: NoSchedule
 
   service:
     labels: {}
@@ -113,12 +105,7 @@ vpn:
   affinity: {}
   resources: {}
   nodeSelector:
-    kubernetes.io/arch: amd64
   tolerations:
-  - key: kubernetes.azure.com/scalesetpriority
-    operator: Equal
-    value: spot 
-    effect: NoSchedule
 
   service:
     labels: {}
@@ -143,12 +130,7 @@ registry:
   affinity: {}
   resources: {}
   nodeSelector:
-    kubernetes.io/arch: amd64
   tolerations:
-  - key: kubernetes.azure.com/scalesetpriority
-    operator: Equal
-    value: spot 
-    effect: NoSchedule
 
   service:
     labels: {}
@@ -169,12 +151,7 @@ s3:
   affinity: {}
   resources: {}
   nodeSelector:
-    kubernetes.io/arch: amd64
   tolerations:
-  - key: kubernetes.azure.com/scalesetpriority
-    operator: Equal
-    value: spot 
-    effect: NoSchedule
 
   service:
     labels: {}
@@ -197,12 +174,7 @@ db:
   affinity: {}
   resources: {}
   nodeSelector:
-    kubernetes.io/arch: amd64
   tolerations:
-  - key: kubernetes.azure.com/scalesetpriority
-    operator: Equal
-    value: spot 
-    effect: NoSchedule
 
   service:
     labels: {}
@@ -240,12 +212,7 @@ redis:
   affinity: {}
   resources: {}
   nodeSelector:
-    kubernetes.io/arch: amd64
   tolerations:
-  - key: kubernetes.azure.com/scalesetpriority
-    operator: Equal
-    value: spot 
-    effect: NoSchedule
 
   service:
     labels: {}
@@ -263,12 +230,7 @@ ui:
   affinity: {}
   resources: {}
   nodeSelector:
-    kubernetes.io/arch: amd64
   tolerations:
-  - key: kubernetes.azure.com/scalesetpriority
-    operator: Equal
-    value: spot 
-    effect: NoSchedule
   service:
     labels: {}
     annotations: {}
@@ -288,12 +250,7 @@ remote:
   affinity: {}
   resources: {}
   nodeSelector:
-    kubernetes.io/arch: amd64
   tolerations:
-  - key: kubernetes.azure.com/scalesetpriority
-    operator: Equal
-    value: spot 
-    effect: NoSchedule
   service:
     labels: {}
     annotations: {}
@@ -312,12 +269,7 @@ postgrest:
   affinity: {}
   resources: {}
   nodeSelector:
-    kubernetes.io/arch: amd64
   tolerations:
-  - key: kubernetes.azure.com/scalesetpriority
-    operator: Equal
-    value: spot 
-    effect: NoSchedule
   service:
     labels: {}
     annotations: {}
@@ -344,12 +296,7 @@ builder:
   affinity: {}
   resources: {}
   nodeSelector:
-    kubernetes.io/arch: amd64
   tolerations:
-  - key: kubernetes.azure.com/scalesetpriority
-    operator: Equal
-    value: spot 
-    effect: NoSchedule
   # Need extended timeout for build and delta operations
   service:
     labels: {}
@@ -373,12 +320,7 @@ builder:
     affinity: {}
     resources: {}
     nodeSelector:
-      kubernetes.io/arch: amd64
     tolerations:
-    - key: kubernetes.azure.com/scalesetpriority
-      operator: Equal
-      value: spot 
-      effect: NoSchedule
 
     service:
       labels: {}
@@ -403,10 +345,6 @@ builder:
     nodeSelector:
       kubernetes.io/arch: arm64
     tolerations:
-    - key: kubernetes.azure.com/scalesetpriority
-      operator: Equal
-      value: spot 
-      effect: NoSchedule
 
     service:
       labels: {}
@@ -430,12 +368,7 @@ delta:
   affinity: {}
   resources: {}
   nodeSelector:
-    kubernetes.io/arch: amd64
   tolerations:
-  - key: kubernetes.azure.com/scalesetpriority
-    operator: Equal
-    value: spot 
-    effect: NoSchedule
 
   # Need extended timeout for build and delta operations
   service:
@@ -461,12 +394,7 @@ helper:
   affinity: {}
   resources: {}
   nodeSelector:
-    kubernetes.io/arch: amd64
   tolerations:
-  - key: kubernetes.azure.com/scalesetpriority
-    operator: Equal
-    value: spot 
-    effect: NoSchedule
 
   service:
     labels: {}
@@ -506,23 +434,13 @@ haproxy:
       timeout-client: "75s"
       timeout-client-fin: "75s"
     nodeSelector:
-      kubernetes.io/arch: amd64
     tolerations:
-    - key: kubernetes.azure.com/scalesetpriority
-      operator: Equal
-      value: spot 
-      effect: NoSchedule
 
 reloader:
   reloader:
     deployment:
       nodeSelector:
-        kubernetes.io/arch: amd64
       tolerations:
-      - key: kubernetes.azure.com/scalesetpriority
-        operator: Equal
-        value: spot 
-        effect: NoSchedule
 
 loki:
   nameOverride: openbalena-loki
@@ -548,22 +466,12 @@ loki:
   gateway:
     replicas: 1
     nodeSelector:
-      kubernetes.io/arch: amd64
     tolerations:
-    - key: kubernetes.azure.com/scalesetpriority
-      operator: Equal
-      value: spot 
-      effect: NoSchedule
     affinity: []
   backend:
     replicas: 2
     nodeSelector:
-      kubernetes.io/arch: amd64
     tolerations:
-    - key: kubernetes.azure.com/scalesetpriority
-      operator: Equal
-      value: spot 
-      effect: NoSchedule
     affinity: []
     annotations:
       reloader.stakater.com/auto: "true"
@@ -590,12 +498,7 @@ loki:
   read:
     replicas: 2
     nodeSelector:
-      kubernetes.io/arch: amd64
     tolerations:
-    - key: kubernetes.azure.com/scalesetpriority
-      operator: Equal
-      value: spot 
-      effect: NoSchedule
     affinity: []
     annotations:
       reloader.stakater.com/auto: "true"
@@ -615,12 +518,7 @@ loki:
   write:
     replicas: 2
     nodeSelector:
-      kubernetes.io/arch: amd64
     tolerations:
-    - key: kubernetes.azure.com/scalesetpriority
-      operator: Equal
-      value: spot 
-      effect: NoSchedule
     affinity: []
     annotations:
       reloader.stakater.com/auto: "true"

@@ -67,8 +67,13 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.builder.amd64.tolerations  }}
+      {{- if or .Values.builder.amd64.tolerations .Values.global.tolerations }}
       tolerations:
-        {{- toYaml . | nindent 8 }}
+        {{- if .Values.builder.amd64.tolerations }}
+        {{- toYaml .Values.builder.amd64.tolerations | nindent 8 }}
+        {{- end }}
+        {{- if .Values.global.tolerations }}
+        {{- toYaml .Values.global.tolerations | nindent 8 }}
+        {{- end }}
       {{- end }}
 {{- end }}
