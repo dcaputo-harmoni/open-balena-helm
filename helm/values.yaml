@@ -492,9 +492,6 @@ loki:
       enableStatefulSetAutoDeletePVC: false
       size: 10Gi
       storageClass:
-      selector:
-        matchLabels: 
-          app: openbalena-loki-backend
   read:
     replicas: 2
     nodeSelector:
@@ -539,9 +536,6 @@ loki:
       enableStatefulSetAutoDeletePVC: false
       size: 10Gi
       storageClass:
-      selector:
-        matchLabels: 
-          app: openbalena-loki-write
   monitoring:
     lokiCanary:
       enabled: false
