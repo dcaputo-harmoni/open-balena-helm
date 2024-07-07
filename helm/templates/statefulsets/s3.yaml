@@ -80,7 +80,7 @@ spec:
               name: openbalena-s3-keys
               key: secret-key
         - name: BUCKETS
-          value: "{{ index .Values "global" "s3" "buckets" }}"
+          value: "{{ index .Values "s3" "autoCreateBuckets" }}"
         volumeMounts:
         - mountPath: /export
           name: data
@@ -107,7 +107,7 @@ spec:
                   ln -s /certs/api/certificate /certs/private/api.{{ .Values.global.hostname }}.pem;
                   ln -s /certs/api/private_key /certs/private/api.{{ .Values.global.hostname }}.key;
                   ln -s /certs/api-kid/api_kid /certs/private/api.{{ .Values.global.hostname }}.kid;
-                  echo 'module(load="imjournal")\nmodule(load="mmjsonparse")\n$imjournalRatelimitInterval 0\n$imjournalRatelimitBurst 0\n*.* action(type="omfwd" Target="openbalena-promtail-syslog" Port="1514" Protocol="tcp" Template="RSYSLOG_SyslogProtocol23Format" TCP_Framing="octet-counted")' > /etc/rsyslog.d/00-promtail-relay.conf;
+                  if test "{{ .Values.global.promtail.server }}"; then echo 'module(load="imjournal")\nmodule(load="mmjsonparse")\n$imjournalRatelimitInterval 0\n$imjournalRatelimitBurst 0\n*.* action(type="omfwd" Target="{{ .Values.global.promtail.server }}" Port="{{ .Values.global.promtail.port }}" Protocol="tcp" Template="RSYSLOG_SyslogProtocol23Format" TCP_Framing="octet-counted")' > /etc/rsyslog.d/00-promtail-relay.conf; fi;
       volumes:
       - name: data
         persistentVolumeClaim:

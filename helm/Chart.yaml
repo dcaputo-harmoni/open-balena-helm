@@ -16,15 +16,3 @@ dependencies:
   version: 0.14.2
   alias: haproxy
   repository: "https://haproxy-ingress.github.io/charts"
-- name: loki
-  version: 5.35.0
-  alias: loki
-  repository: "https://grafana.github.io/helm-charts"
-- name: promtail
-  version: 6.15.3
-  alias: promtail
-  repository: "https://grafana.github.io/helm-charts"
-- name: reloader
-  version: 1.0.52
-  alias: reloader
-  repository: "https://stakater.github.io/stakater-charts"

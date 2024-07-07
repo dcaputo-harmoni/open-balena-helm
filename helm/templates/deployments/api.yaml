@@ -52,6 +52,7 @@ spec:
         - >
           apt-get update && apt-get install -y openssl xxd;
           openssl ec -pubout -outform der -in /cert-api/private_key | sha256sum | head -c 60 | xxd -r -p | base32 | fold -w4 | paste -sd : | tr -d '\n' > /cert-api-kid/api_kid
+      {{- if .Values.db.enabled }}
       - name: wait-for-db
         image: postgres:12
         env:
@@ -64,30 +65,11 @@ spec:
         - /bin/sh
         - -c
         - >
-          until /usr/lib/postgresql/12/bin/pg_isready -h openbalena-db -p 5432 -U $DB_USER -d resin -q; do
-            echo "Waiting for openbalena-db...";
+          until /usr/lib/postgresql/12/bin/pg_isready -h {{- include "openbalena.fullname" . }}-db -p 5432 -U $DB_USER -d {{ .Values.global.db.name }} -q; do
+            echo "Waiting for {{- include "openbalena.fullname" . }}-db...";
             sleep 5;
           done
-      - name: wait-for-loki-write
-        image: busybox:latest
-        command:
-        - /bin/sh
-        - -c
-        - >
-          until nc -vz {{ .Values.api.lokiHost }} {{ .Values.api.lokiPort }};
-            do echo "Waiting for {{ .Values.api.lokiHost }}:{{ .Values.api.lokiPort }}";
-            sleep 1;
-          done
-      - name: wait-for-promtail
-        image: busybox:latest
-        command:
-        - /bin/sh
-        - -c
-        - >
-          until nc -vz {{ .Values.global.promtail.server }} {{ .Values.global.promtail.port }};
-            do echo "Waiting for {{ .Values.global.promtail.server }}:{{ .Values.global.promtail.port }}";
-            sleep 1;
-          done
+      {{- end }}
       containers:
       - name: {{ .Chart.Name }}-api
         image: {{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}
@@ -120,8 +102,20 @@ spec:
             secretKeyRef:
               name: openbalena-api-cookie-session
               key: secret
+        {{- if .Values.db.enabled }}
         - name: DB_HOST
-          value: "openbalena-db"
+          value: "{{- include "openbalena.fullname" . }}-db"
+        {{- else }}
+        - name: DB_HOST
+          value: "{{ .Values.global.db.server }}"
+        {{- end }}
+        - name: DB_NAME
+          value: "{{ .Values.global.db.name }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-db-creds
+              key: username
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -129,11 +123,6 @@ spec:
               key: password
         - name: DB_PORT
           value: "5432"
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: openbalena-db-creds
-              key: username
         - name: DELTA_HOST
           value: "delta.{{ .Values.global.hostname }}"
         - name: DEVICE_CONFIG_SSH_AUTHORIZED_KEYS
@@ -143,8 +132,13 @@ spec:
               key: authorized-keys
         - name: HOST
           value: "api.{{ .Values.global.hostname }}"
+        {{- if .Values.s3.enabled }}
         - name: IMAGE_STORAGE_ENDPOINT
           value: "s3.{{ .Values.global.hostname }}"
+        {{- else }}
+        - name: IMAGE_STORAGE_ENDPOINT
+          value: "{{ .Values.global.s3.server }}"
+        {{- end }}
         - name: IMAGE_STORAGE_BUCKET
           value: "{{ index .Values "global" "s3" "imageBucket" }}"
         - name: IMAGE_STORAGE_PREFIX
@@ -180,10 +174,17 @@ spec:
           value: "__unused__"
         - name: PUBNUB_SUBSCRIBE_KEY
           value: "__unused__"
+        {{- if .Values.redis.enabled }}
         - name: REDIS_HOST
           value: "{{- include "openbalena.fullname" . }}-redis:6379"
         - name: REDIS_IS_CLUSTER
           value: "false"
+        {{- else }}
+        - name: REDIS_HOST
+          value: "{{ .Values.global.redis.server }}"
+        - name: REDIS_IS_CLUSTER
+          value: "{{ .Values.global.redis.clusterMode }}"
+        {{- end}}        
         - name: LOKI_HOST
           value: "{{ .Values.api.lokiHost }}"
         - name: LOKI_PORT
@@ -276,7 +277,7 @@ spec:
                   ln -s /certs/api/certificate /certs/private/api.{{ .Values.global.hostname }}.pem;
                   ln -s /certs/api/private_key /certs/private/api.{{ .Values.global.hostname }}.key;
                   ln -s /certs/api-kid/api_kid /certs/private/api.{{ .Values.global.hostname }}.kid;
-                  echo 'module(load="imjournal")\nmodule(load="mmjsonparse")\n$imjournalRatelimitInterval 0\n$imjournalRatelimitBurst 0\n*.* action(type="omfwd" Target="openbalena-promtail-syslog" Port="1514" Protocol="tcp" Template="RSYSLOG_SyslogProtocol23Format" TCP_Framing="octet-counted")' > /etc/rsyslog.d/00-promtail-relay.conf;
+                  if test "{{ .Values.global.promtail.server }}"; then echo 'module(load="imjournal")\nmodule(load="mmjsonparse")\n$imjournalRatelimitInterval 0\n$imjournalRatelimitBurst 0\n*.* action(type="omfwd" Target="{{ .Values.global.promtail.server }}" Port="{{ .Values.global.promtail.port }}" Protocol="tcp" Template="RSYSLOG_SyslogProtocol23Format" TCP_Framing="octet-counted")' > /etc/rsyslog.d/00-promtail-relay.conf; fi;
                   cd /usr/src/app;
                   wget -q https://github.com/balena-io/open-balena-api/commit/bb9254f4a7d44aed712463e3c418e915129a43f9.patch;
                   patch -p1 < bb9254f4a7d44aed712463e3c418e915129a43f9.patch;
