@@ -5,18 +5,24 @@ global:
   production-mode: true
   ssh-authorized-keys: ""
 
+  loki:
+    server:
+    port: 9095
+    writePct: 100
+
   promtail:
-    server: ""
+    server:
     port: 1514
 
   db:
-    server: ""
+    server:
+    port: 5432
     name: "resin"
     user: "docker"
     password: "password"
 
   s3:
-    server: ""
+    server:
     registryBucket: "registry-data"
     registryStoragePath: "/data"
     imageBucket: "image-data"
@@ -31,7 +37,8 @@ global:
       privatekey:
   
   redis:
-    server: ""
+    server:
+    port: 6379
     clusterMode: false
 
   keys:
@@ -86,10 +93,6 @@ api:
     externalIPs: []
 
   sentry-dsn: ""
-
-  lokiHost: openbalena-loki-write
-  lokiPort: 9095
-  lokiWritePct: 100
 
   contractsPrivateRepoOwner:
   contractsPrivateRepoName:
@@ -280,8 +283,6 @@ postgrest:
     repository: harmonidcaputo/open-balena-postgrest
     tag: latest
     pullPolicy: Always
-  dbHost: openbalena-db.openbalena
-  dbPort: 5432
 
 builder:
   enabled: true

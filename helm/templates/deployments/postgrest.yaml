@@ -64,8 +64,13 @@ spec:
             secretKeyRef:
               name: openbalena-db-creds
               key: password
+        {{- if .Values.db.enabled }}
         - name: PGRST_DB_URI
-          value: postgres://$(OPENBALENA_DB_USERNAME):$(OPENBALENA_DB_PASSWORD)@{{ .Values.postgrest.dbHost }}:{{ .Values.postgrest.dbPort }}/{{ .Values.global.db.name }}
+          value: postgres://$(OPENBALENA_DB_USERNAME):$(OPENBALENA_DB_PASSWORD)@{{- include "openbalena.fullname" . }}-db:5432/{{ .Values.global.db.name }}
+        {{- else }}
+        - name: PGRST_DB_URI
+          value: postgres://$(OPENBALENA_DB_USERNAME):$(OPENBALENA_DB_PASSWORD)@{{ .Values.global.db.server }}:{{ .Values.global.db.port }}/{{ .Values.global.db.name }}
+        {{- end }}
         - name: PGRST_JWT_SECRET
           valueFrom:
             secretKeyRef:

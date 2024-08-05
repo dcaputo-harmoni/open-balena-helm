@@ -181,17 +181,18 @@ spec:
           value: "false"
         {{- else }}
         - name: REDIS_HOST
-          value: "{{ .Values.global.redis.server }}"
+          value: "{{ .Values.global.redis.server }}:{{ .Values.global.redis.port }}"
         - name: REDIS_IS_CLUSTER
           value: "{{ .Values.global.redis.clusterMode }}"
-        {{- end}}        
+        {{- end}}
+        {{- if .Values.global.loki.server }}
         - name: LOKI_HOST
-          value: "{{ .Values.api.lokiHost }}"
+          value: "{{ .Values.global.loki.server }}"
         - name: LOKI_PORT
-          value: "{{ .Values.api.lokiPort }}"
+          value: "{{ .Values.global.loki.port }}"
         - name: LOKI_WRITE_PCT
-          value: "{{ .Values.api.lokiWritePct }}"
-
+          value: "{{ .Values.global.loki.writePct }}"
+        {{- end}}
         {{- if .Values.api.contractsPrivateRepoOwner }}
         - name: CONTRACTS_PRIVATE_REPO_OWNER
           value: "{{ .Values.api.contractsPrivateRepoOwner }}"
