@@ -57,8 +57,13 @@ spec:
         env:
         - name: API_HOST
           value: "api.{{ .Values.global.hostname }}"
+        {{- if .Values.s3.enabled }}
         - name: IMAGE_STORAGE_ENDPOINT
           value: "s3.{{ .Values.global.hostname }}"
+        {{- else }}
+        - name: IMAGE_STORAGE_ENDPOINT
+          value: "{{ .Values.global.s3.server }}"
+        {{- end }}
         - name: IMAGE_STORAGE_BUCKET
           value: "{{ index .Values "global" "s3" "imageBucket" }}"
         - name: IMAGE_STORAGE_PREFIX
