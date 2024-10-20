@@ -88,6 +88,8 @@ spec:
           value: "10.2.0.1"
         - name: SENTRY_DSN
           value: "{{ index .Values "vpn" "sentry-dsn" }}"
+        - name: VPN_INSTANCE_COUNT
+          value: "{{ index .Values "vpn" "instanceCount" }}"
         - name: VPN_HAPROXY_USEPROXYPROTOCOL
           value: "false"
         - name: VPN_SERVICE_API_KEY
