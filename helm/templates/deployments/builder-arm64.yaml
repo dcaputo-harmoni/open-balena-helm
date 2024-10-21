@@ -62,7 +62,12 @@ spec:
             mountPath: /var/lib/docker
       volumes:
         - name: builder-arm64-storage
+          {{- if .Values.builder.arm64.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: builder-arm64-pvc
+          {{- else }}
           emptyDir: {}
+          {{- end }}
       {{- with .Values.builder.arm64.nodeSelector  }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

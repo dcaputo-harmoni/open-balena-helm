@@ -329,8 +329,10 @@ builder:
       annotations: {}
       externalIPs: []
     
-    storage: "10Gi"
-    storageClass:
+    persistence:
+      enabled: false
+      # storage: "100Gi"
+      # storageClass: default
 
   arm64:
     enabled: false
@@ -353,8 +355,10 @@ builder:
       annotations: {}
       externalIPs: []
     
-    storage: "10Gi"
-    storageClass:
+    persistence:
+      enabled: false
+      # storage: "100Gi"
+      # storageClass: default
 
 delta:
   enabled: true

@@ -62,7 +62,12 @@ spec:
             mountPath: /var/lib/docker
       volumes:
         - name: builder-amd64-storage
+          {{- if .Values.builder.amd64.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: builder-amd64-pvc
+          {{- else }}
           emptyDir: {}
+          {{- end }}
       {{- with .Values.builder.amd64.nodeSelector  }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

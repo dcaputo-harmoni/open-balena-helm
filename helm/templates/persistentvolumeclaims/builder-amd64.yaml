@@ -1,0 +1,18 @@
+{{- if .Values.builder.amd64.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: builder-amd64-pvc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: builder-amd64
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.builder.amd64.persistence.size }}
+  {{- if .Values.builder.amd64.persistence.storageClass }}
+  storageClassName: {{ .Values.builder.amd64.persistence.storageClass }}
+  {{- end }}
+{{- end }}

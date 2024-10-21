@@ -1,0 +1,18 @@
+{{- if .Values.builder.arm64.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: builder-arm64-pvc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: builder-arm64
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.builder.arm64.persistence.size }}
+  {{- if .Values.builder.arm64.persistence.storageClass }}
+  storageClassName: {{ .Values.builder.arm64.persistence.storageClass }}
+  {{- end }}
+{{- end }}
