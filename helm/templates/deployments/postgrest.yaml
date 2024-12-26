@@ -54,6 +54,8 @@ spec:
           capabilities:
             add: ["SYS_ADMIN", "SYS_RESOURCE"]
         env:
+        - name: OPENBALENA_DB_ROLE
+          value: {{ .Values.global.db.role }}
         - name: OPENBALENA_DB_USERNAME
           valueFrom:
             secretKeyRef:

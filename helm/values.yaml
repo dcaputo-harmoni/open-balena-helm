@@ -20,6 +20,7 @@ global:
     name: "resin"
     user: "docker"
     password: "password"
+    role: "docker"
 
   s3:
     server:
