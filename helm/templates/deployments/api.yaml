@@ -86,8 +86,6 @@ spec:
           capabilities:
             add: ["SYS_ADMIN", "SYS_RESOURCE"]
         env:
-        - name: CONFD_BACKEND
-          value: "ENV"
         - name: BALENA_TLD
           value: "{{ .Values.global.hostname }}"
         - name: TRUST_PROXY

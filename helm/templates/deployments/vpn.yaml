@@ -69,8 +69,6 @@ spec:
           capabilities:
             add: ["SYS_ADMIN", "SYS_RESOURCE", "NET_ADMIN"]
         env:
-        - name: CONFD_BACKEND
-          value: "ENV"
         - name: BALENA_TLD
           value: "{{ .Values.global.hostname }}"
         - name: API_SERVICE_API_KEY
