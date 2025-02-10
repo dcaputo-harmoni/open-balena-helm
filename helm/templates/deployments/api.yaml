@@ -93,11 +93,8 @@ spec:
           echo "Generating DB options...";
           DB_HOST_PRIMARY="{{ if .Values.db.enabled }}{{ include "openbalena.fullname" . }}-db{{ else }}{{ .Values.global.db.server }}{{ end }}";
           DB_PORT_PRIMARY="{{ if .Values.db.enabled }}5432{{ else }}{{ .Values.global.db.port }}{{ end }}";
-          {{- if .Values.global.db.sslMode -}}
-          EXTRA_OPTIONS="$EXTRA_OPTIONS sslmode: '{{ .Values.global.db.sslMode }}',";
-          {{- end -}}
-          {{- if .Values.global.db.rejectUnauthorized -}}
-          EXTRA_OPTIONS="$EXTRA_OPTIONS rejectUnauthorized: {{ .Values.global.db.rejectUnauthorized }},";
+          {{- if .Values.global.db.ssl.enabled -}}
+          EXTRA_OPTIONS="$EXTRA_OPTIONS ssl: { rejectUnauthorized: {{ .Values.global.db.ssl.rejectUnauthorized }} },";
           {{- end -}}
           PRIMARY_OPTIONS="primary: {user: '$DB_USER', password: '$DB_PASSWORD', host: '$DB_HOST_PRIMARY', port: $DB_PORT_PRIMARY, database: '{{ .Values.global.db.name }}', $EXTRA_OPTIONS },";
           {{- if .Values.global.db.replica.enabled -}}

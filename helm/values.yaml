@@ -17,8 +17,9 @@ global:
   db:
     server:
     port: 5432
-    sslMode: "disable"
-    rejectUnauthorized: true
+    ssl: 
+      enabled: false
+      rejectUnauthorized: true
     user: "docker"
     password: "password"
     name: "resin"
