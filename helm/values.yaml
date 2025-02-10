@@ -17,10 +17,16 @@ global:
   db:
     server:
     port: 5432
-    name: "resin"
+    sslMode: "disable"
+    rejectUnauthorized: true
     user: "docker"
     password: "password"
+    name: "resin"
     role: "docker"
+    replica:
+      enabled: false
+      server:
+      port: 5432
 
   s3:
     server:

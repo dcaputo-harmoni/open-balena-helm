@@ -70,6 +70,44 @@ spec:
             sleep 5;
           done
       {{- end }}
+      - name: generate-options
+        image: ubuntu:22.04
+        volumeMounts:
+        - mountPath: /options
+          name: options
+        env:
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-db-creds
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: openbalena-db-creds
+              key: password
+        command:
+        - /bin/sh
+        - -c
+        - >
+          echo "Generating DB options...";
+          DB_HOST_PRIMARY="{{ if .Values.db.enabled }}{{ include "openbalena.fullname" . }}-db{{ else }}{{ .Values.global.db.server }}{{ end }}";
+          DB_PORT_PRIMARY="{{ if .Values.db.enabled }}5432{{ else }}{{ .Values.global.db.port }}{{ end }}";
+          {{- if .Values.global.db.sslMode -}}
+          EXTRA_OPTIONS="$EXTRA_OPTIONS sslmode: '{{ .Values.global.db.sslMode }}',";
+          {{- end -}}
+          {{- if .Values.global.db.rejectUnauthorized -}}
+          EXTRA_OPTIONS="$EXTRA_OPTIONS rejectUnauthorized: {{ .Values.global.db.rejectUnauthorized }},";
+          {{- end -}}
+          PRIMARY_OPTIONS="primary: {user: '$DB_USER', password: '$DB_PASSWORD', host: '$DB_HOST_PRIMARY', port: $DB_PORT_PRIMARY, database: '{{ .Values.global.db.name }}', $EXTRA_OPTIONS },";
+          {{- if .Values.global.db.replica.enabled -}}
+          DB_HOST_REPLICA="{{ .Values.global.db.replica.server }}";
+          DB_PORT_REPLICA="{{ .Values.global.db.replica.port }}";
+          REPLICA_OPTIONS="replica: {user: '$DB_USER', password: '$DB_PASSWORD', host: '$DB_HOST_REPLICA', port: $DB_PORT_REPLICA, database: '{{ .Values.global.db.name }}', $EXTRA_OPTIONS }, ";
+          {{- end -}}
+          DB_OPTIONS="databaseOptions: {engine: 'postgres', params: { $PRIMARY_OPTIONS $REPLICA_OPTIONS }, },";
+          echo "$DB_OPTIONS" > /options/database;
+          echo "DB options generated.";
       containers:
       - name: {{ .Chart.Name }}-api
         image: {{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}
@@ -100,27 +138,6 @@ spec:
             secretKeyRef:
               name: openbalena-api-cookie-session
               key: secret
-        {{- if .Values.db.enabled }}
-        - name: DB_HOST
-          value: "{{- include "openbalena.fullname" . }}-db"
-        {{- else }}
-        - name: DB_HOST
-          value: "{{ .Values.global.db.server }}"
-        {{- end }}
-        - name: DB_NAME
-          value: "{{ .Values.global.db.name }}"
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: openbalena-db-creds
-              key: username
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: openbalena-db-creds
-              key: password
-        - name: DB_PORT
-          value: "5432"
         - name: DELTA_HOST
           value: "delta.{{ .Values.global.hostname }}"
         - name: DEVICE_CONFIG_SSH_AUTHORIZED_KEYS
@@ -249,6 +266,8 @@ spec:
           name: run
         - mountPath: /sys/fs/cgroup
           name: cgroup
+        - mountPath: /usr/src/app/options
+          name: options
         - mountPath: /certs/root
           name: cert-root
         - mountPath: /certs/vpn
@@ -284,6 +303,7 @@ spec:
                   patch -p1 < f5161acf0c72242a663acc0bee5216210684a542.patch;
                   wget -q https://github.com/balena-io/open-balena-api/commit/242ca68fa4e371e0aa0a5ff9d5682ee28fe89fd9.patch;
                   patch -p1 < 242ca68fa4e371e0aa0a5ff9d5682ee28fe89fd9.patch;
+                  sed -i "/onInitHooks,/r /usr/src/app/options/database" /usr/src/app/init.ts
       volumes:
       - name: run
         emptyDir:
@@ -291,6 +311,8 @@ spec:
       - name: cgroup
         emptyDir:
           medium: Memory
+      - name: options
+        emptyDir: {}
       - name: cert-api-kid
         emptyDir: {}
       - name: cert-root
