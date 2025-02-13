@@ -341,6 +341,7 @@ builder:
       enabled: false
       # storage: "100Gi"
       # storageClass: default
+      # retainOnDelete: true
 
   arm64:
     enabled: false
@@ -367,6 +368,7 @@ builder:
       enabled: false
       # storage: "100Gi"
       # storageClass: default
+      # retainOnDelete: true
 
 delta:
   enabled: true

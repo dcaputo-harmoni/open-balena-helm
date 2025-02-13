@@ -1,4 +1,6 @@
 {{- if .Values.builder.arm64.persistence.enabled }}
+{{- $pvc := lookup "v1" "PersistentVolumeClaim" .Release.Namespace "builder-arm64-pvc" }}
+{{- if not $pvc }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -6,6 +8,10 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/component: builder-arm64
+  {{- if .Values.builder.arm64.persistence.retainOnDelete }}
+  annotations:
+    "helm.sh/resource-policy": keep
+  {{- end }}
 spec:
   accessModes:
     - ReadWriteOnce
@@ -15,4 +21,5 @@ spec:
   {{- if .Values.builder.arm64.persistence.storageClass }}
   storageClassName: {{ .Values.builder.arm64.persistence.storageClass }}
   {{- end }}
+{{- end }}
 {{- end }}
