@@ -42,7 +42,7 @@ spec:
       - name: {{ .Chart.Name }}-postgrest
         image: {{ .Values.postgrest.image.repository }}:{{ .Values.postgrest.image.tag }}
         imagePullPolicy: {{ .Values.postgrest.image.pullPolicy }}
-        {{- with .Values.postgrest.resources }}
+        {{- with (coalesce .Values.postgrest.resources .Values.global.resources) }}
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}

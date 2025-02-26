@@ -44,7 +44,7 @@ spec:
       - name: {{ .Chart.Name }}-db
         image: {{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}
         imagePullPolicy: {{ .Values.db.image.pullPolicy }}
-        {{- with .Values.db.resources }}
+        {{- with (coalesce .Values.db.resources .Values.global.resources) }}
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}

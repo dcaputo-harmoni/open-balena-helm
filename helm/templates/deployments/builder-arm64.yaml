@@ -43,7 +43,7 @@ spec:
       - name: {{ .Chart.Name }}-builder-arm64
         image: {{ .Values.builder.arm64.image.repository }}:{{ .Values.builder.arm64.image.tag }}
         imagePullPolicy: {{ .Values.builder.arm64.image.pullPolicy }}
-        {{- with .Values.builder.arm64.resources }}
+        {{- with (coalesce .Values.builder.arm64.resources .Values.global.resources) }}
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}

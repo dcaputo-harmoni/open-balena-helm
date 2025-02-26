@@ -43,7 +43,7 @@ spec:
       - name: {{ .Chart.Name }}-delta
         image: {{ .Values.delta.image.repository }}:{{ .Values.delta.image.tag }}
         imagePullPolicy: {{ .Values.delta.image.pullPolicy }}
-        {{- with .Values.delta.resources }}
+        {{- with (coalesce .Values.delta.resources .Values.global.resources) }}
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}

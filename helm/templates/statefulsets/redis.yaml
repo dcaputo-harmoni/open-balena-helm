@@ -44,7 +44,7 @@ spec:
       - name: {{ .Chart.Name }}-redis
         image: {{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
         imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
-        {{- with .Values.redis.resources }}
+        {{- with (coalesce .Values.redis.resources .Values.global.resources) }}
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}

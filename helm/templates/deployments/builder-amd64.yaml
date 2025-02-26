@@ -43,7 +43,7 @@ spec:
       - name: {{ .Chart.Name }}-builder-amd64
         image: {{ .Values.builder.amd64.image.repository }}:{{ .Values.builder.amd64.image.tag }}
         imagePullPolicy: {{ .Values.builder.amd64.image.pullPolicy }}
-        {{- with .Values.builder.amd64.resources }}
+        {{- with (coalesce .Values.builder.amd64.resources .Values.global.resources) }}
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}

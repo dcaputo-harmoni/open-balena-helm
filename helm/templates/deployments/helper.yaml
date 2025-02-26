@@ -43,7 +43,7 @@ spec:
       - name: {{ .Chart.Name }}-helper
         image: {{ .Values.helper.image.repository }}:{{ .Values.helper.image.tag }}
         imagePullPolicy: {{ .Values.helper.image.pullPolicy }}
-        {{- with .Values.helper.resources }}
+        {{- with (coalesce .Values.helper.resources .Values.global.resources) }}
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}

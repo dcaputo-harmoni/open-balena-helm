@@ -55,7 +55,7 @@ spec:
       - name: {{ .Chart.Name }}-s3
         image: {{ .Values.s3.image.repository }}:{{ .Values.s3.image.tag }}
         imagePullPolicy: {{ .Values.s3.image.pullPolicy }}
-        {{- with .Values.s3.resources }}
+        {{- with (coalesce .Values.s3.resources .Values.global.resources) }}
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}

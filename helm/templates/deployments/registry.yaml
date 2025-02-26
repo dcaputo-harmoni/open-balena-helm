@@ -53,7 +53,7 @@ spec:
       - name: {{ .Chart.Name }}-registry
         image: {{ .Values.registry.image.repository }}:{{ .Values.registry.image.tag }}
         imagePullPolicy: {{ .Values.registry.image.pullPolicy }}
-        {{- with .Values.registry.resources }}
+        {{- with (coalesce .Values.registry.resources .Values.global.resources) }}
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}

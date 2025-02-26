@@ -42,7 +42,7 @@ spec:
       - name: {{ .Chart.Name }}-remote
         image: {{ .Values.remote.image.repository }}:{{ .Values.remote.image.tag }}
         imagePullPolicy: {{ .Values.remote.image.pullPolicy }}
-        {{- with .Values.remote.resources }}
+        {{- with (coalesce .Values.remote.resources .Values.global.resources) }}
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}
