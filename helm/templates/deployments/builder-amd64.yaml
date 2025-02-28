@@ -39,6 +39,9 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      {{- with (coalesce .Values.builder.amd64.priorityClassName .Values.global.priorityClassName) }}
+      priorityClassName: {{ . | quote }}
+      {{- end }}
       containers:
       - name: {{ .Chart.Name }}-builder-amd64
         image: {{ .Values.builder.amd64.image.repository }}:{{ .Values.builder.amd64.image.tag }}

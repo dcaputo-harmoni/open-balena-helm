@@ -38,6 +38,9 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      {{- with (coalesce .Values.registry.priorityClassName .Values.global.priorityClassName) }}
+      priorityClassName: {{ . | quote }}
+      {{- end }}
       initContainers:
       - name: wait-for-promtail
         image: busybox:latest

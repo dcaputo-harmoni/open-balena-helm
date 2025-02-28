@@ -39,6 +39,9 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      {{- with (coalesce .Values.helper.priorityClassName .Values.global.priorityClassName) }}
+      priorityClassName: {{ . | quote }}
+      {{- end }}
       containers:
       - name: {{ .Chart.Name }}-helper
         image: {{ .Values.helper.image.repository }}:{{ .Values.helper.image.tag }}

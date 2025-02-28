@@ -39,6 +39,9 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      {{- with (coalesce .Values.delta.priorityClassName .Values.global.priorityClassName) }}
+      priorityClassName: {{ . | quote }}
+      {{- end }}
       containers:
       - name: {{ .Chart.Name }}-delta
         image: {{ .Values.delta.image.repository }}:{{ .Values.delta.image.tag }}

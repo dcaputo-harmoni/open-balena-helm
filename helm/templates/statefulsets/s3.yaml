@@ -40,6 +40,9 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      {{- with (coalesce .Values.s3.priorityClassName .Values.global.priorityClassName) }}
+      priorityClassName: {{ . | quote }}
+      {{- end }}
       initContainers:
       - name: wait-for-promtail
         image: busybox:latest
